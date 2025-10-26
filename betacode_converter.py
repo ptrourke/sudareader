@@ -708,7 +708,7 @@ hash_mappings = {
     2245: chr(0x1D0F5),  # 𝃵 Byzantine Musical Symbol Gorgon
 }
 
-test_value = 'e)Mo/lon *samfis s3jac'
+test_value = 'e)Mo/lon *samfis s3jac #867'
 
 def convert_betacode_to_unicode(string_value: str) -> str:
     output_value = []
@@ -716,11 +716,15 @@ def convert_betacode_to_unicode(string_value: str) -> str:
     capitalize_next = False
     for index, character_value in enumerate(string_value):
         new_character = ''
-        next_value = string_value[index + 1]
+        if (index + 1) < len(string_value):
+            next_value = string_value[index + 1]
+        else:
+            next_value = ' '
         if character_value in '*':
             capitalize_next = True
             continue
-        if character_value not in mappings:
+        all_chars = list(mappings.keys()) + ['#']
+        if character_value not in all_chars:
             continue
         if character_value in 'S':
             # look ahead
@@ -738,9 +742,8 @@ def convert_betacode_to_unicode(string_value: str) -> str:
             else:
                 num_match = re.search(r'[0123456789]+', string_value[index:])
                 if num_match:
-                    special_char_number = num_match.group(1)
-                    special_char_number = f'#{special_char_number}'
-
+                    special_char_number = num_match.group(0)
+                    new_character = hash_mappings.get(int(special_char_number))
         else:
             new_character = mappings.get(character_value)
         if capitalize_next:
