@@ -1,4 +1,6 @@
+beautifulsoup4==4.14.2
 black==25.9.0
+bs4==0.0.2
 click==8.3.0
 isort==7.0.0
 mypy_extensions==1.1.0
@@ -6,3 +8,5 @@ packaging==25.0
 pathspec==0.12.1
 platformdirs==4.5.0
 pytokens==0.2.0
+soupsieve==2.8
+typing_extensions==4.15.0
