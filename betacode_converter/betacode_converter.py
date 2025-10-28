@@ -5,10 +5,31 @@ from betacode_converter.hash_code_mappings import hash_code_mappings
 
 
 letters = {
-    r"A": "α", r"B": "β", r"G": "γ", r"D": "δ", r"E": "ε", r"Z": "ζ", r"H": "η",
-    r"Q": "θ", r"I": "ι", r"K": "κ", r"L": "λ", r"M": "μ", r"N": "ν", r"C": "ξ",
-    r"O": "ο", r"P": "π", r"R": "ρ", r"S": "σ", r"T": "τ", r"U": "υ", r"F": "φ",
-    r"X": "χ", r"Y": "ψ", r"W": "ω", r"V": chr(0x03DD),  # Digamma
+    r"A": chr(0x03B1),  #  α alpha,
+    r"B": chr(0x03B2),  # β beta,
+    r"G": chr(0x00B3),  # γ gamma,
+    r"D": chr(0x00B4),  # δ delta,
+    r"E": chr(0x00B5),  # ε epsilon,
+    r"Z": chr(0x00B6),  # ζ zeta,
+    r"H": chr(0x00B7),  # η eta,
+    r"Q": chr(0x00B8),  # "θ" theta,
+    r"I": chr(0x00B9),  # "ι" iota,
+    r"K": chr(0x00BA),  # "κ" kappa,
+    r"L": chr(0x00BB),  # "λ" lambda,
+    r"M": chr(0x00BC),  # "μ" mu,
+    r"N": chr(0x00BD),  # "ν" nu,
+    r"C": chr(0x00BE),  # "ξ" xi,
+    r"O": chr(0x00BF),  # "ο" omicron,
+    r"P": chr(0x00C0),  # "π" pi,
+    r"R": chr(0x00C1),  # "ρ" rho,
+    r"S": chr(0x00C2),  # "σ" sigma,
+    r"T": chr(0x00C4),  # "τ" tau,
+    r"U": chr(0x00C5),  # "υ" upsilon,
+    r"F": chr(0x00C6),  # "φ" phi,
+    r"X": chr(0x00C7),  # "χ" chi,
+    r"Y": chr(0x00C8),  # "ψ" psi,
+    r"W": chr(0x00C9),  # "ω" omega,
+    r"V": chr(0x03DD),  # digamma
 
 }
 
