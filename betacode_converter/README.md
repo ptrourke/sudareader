@@ -29,4 +29,7 @@ and those completed are marked with a check mark and link to the incorporating m
     3.3 % – Additional Punctuation and Characters  **NO**  
     3.4 # – [Additional Characters](./additional_character_mappings.py)  **PARTIAL**  
 
-By default, the converted text is output as UTF-8
+By default, the converted text is output as UTF-8 in Normalization Form C (NFC),
+that is as pre-composed characters; via an optional parameter, the NFC normalization can be 
+skipped, in which case the characters will output in Normalization Form D (NFD).
+
