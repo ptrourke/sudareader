@@ -42,11 +42,12 @@ mappings = {
     '|': chr(0x345),  # 'Iota subscript',
     '?': chr(0x323),  # 'Dot below',
 
-    r'.': 'Period',
+    r',': chr(0x002C),  # comma,
+    r'.': chr(0x002E),  # 'Period',
     r',': chr(0x2019),  # 'Apostrophe',
     r':': chr(0x00B7),  # 'Colon',
     r';': chr(0x003B),  # 'Question Mark',
-    r'-': 'Hyphen',
+    r'-': chr(0x2010),  # 'Hyphen',
     r'_': chr(0x2014),  # 'Em-Dash',
     r' ': ' ',  #'Space',
 }
