@@ -1,4 +1,4 @@
-hash_code_mappings = {
+additional_character_mappings = {
     1: chr(0x03DF),  # ϟ Greek Letter Koppa
     2: chr(0x03DB),  # ϛ Greek Letter Stigma
     3: chr(0x03D9),  # ϙ Greek Letter Archaic Koppa
