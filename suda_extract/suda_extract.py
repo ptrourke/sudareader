@@ -1,7 +1,8 @@
 import copy
 from lxml import etree
 import re
-
+from yaml import safe_load
+from yaml import safe_dump
 from betacode_converter.betacode_converter import convert_betacode_to_unicode
 
 htmlparser = etree.HTMLParser()
@@ -19,7 +20,7 @@ class ExtractEntry(object):
 
     def get_by_div_class_name(self, class_name):
         div_element = self.page_body.xpath(f'//div[@class="{class_name}"]')[0]
-        return etree.tostring(div_element)
+        return div_element
 
     def get_strong_element_text(self, strong_text):
         """Vetting Status: """
@@ -85,7 +86,8 @@ class ExtractEntry(object):
     def get_translation(self):
         # TODO: Process Greek
         translation = self.get_by_div_class_name('translation')
-        return translation
+        translation = etree.tostring(translation).decode('utf-8')
+        return str(translation)
 
     def get_notes(self):
         # TODO: Split notes by note number
@@ -93,7 +95,23 @@ class ExtractEntry(object):
         # TODO: Process links to cross-references
         # TODO: Processing links to Perseus
         notes = self.get_by_div_class_name('notes')
-        return notes
+        notes = etree.tostring(notes).decode('utf-8')
+        return str(notes)
+
+    def get_references(self):
+        # TODO: Split notes by note number
+        # TODO: Process Greek
+        # TODO: Process links to cross-references
+        # TODO: Processing links to Perseus
+        references = self.get_by_div_class_name('bibliography')
+        references = etree.tostring(references).decode('utf-8')
+        return str(references)
+
+    def get_greek_original(self):
+        greek_original_element = self.get_by_div_class_name('greek')
+        greek_original = greek_original_element.text
+        greek_original = convert_betacode_to_unicode(greek_original)
+        return greek_original
 
     def get_vetting_status(self):
         return self.get_strong_element_text('Vetting Status: ')
@@ -104,13 +122,15 @@ class ExtractEntry(object):
             'headword': self.get_headword(),
             'translated_headword': self.get_translated_headword(),
             'vetting_status': self.get_vetting_status(),
+            'greek_original': self.get_greek_original(),
             'translation': self.get_translation(),
             'notes': self.get_notes(),
+            'references':self.get_references(),
         }
         return lemma
 
 lemma = ExtractEntry('rho/289')
-print(lemma.get_lemma_attributes())
+print(safe_dump(lemma.get_lemma_attributes(), allow_unicode=True))
 
 
 
