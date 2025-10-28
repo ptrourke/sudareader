@@ -24,7 +24,9 @@ class TestBetaCodeConverter(unittest.TestCase):
                 "comment": "Definition mu 25: Magos",
             },
             {
-
+                "test_value": r"*(ruka/na",
+                "expected_result": "̔Ρυκάνα",
+                "comment": "Headword rho 289: Rhukana",
             }
         ]
         for test_vector in test_vectors:

@@ -6,32 +6,15 @@ from betacode_converter.hash_code_mappings import hash_code_mappings
 """
 """
 
-mappings = {
-    r"A": "α",
-    r"B": "β",
-    r"G": "γ",
-    r"D": "δ",
-    r"E": "ε",
-    r"Z": "ζ",
-    r"H": "η",
-    r"Q": "θ",
-    r"I": "ι",
-    r"K": "κ",
-    r"L": "λ",
-    r"M": "μ",
-    r"N": "ν",
-    r"C": "ξ",
-    r"O": "ο",
-    r"P": "π",
-    r"R": "ρ",
-    r"S": "σ",
-    r"T": "τ",
-    r"U": "υ",
-    r"F": "φ",
-    r"X": "χ",
-    r"Y": "ψ",
-    r"W": "ω",
-    r"V": chr(0x03DD),  # Digamma
+letters = {
+    r"A": "α", r"B": "β", r"G": "γ", r"D": "δ", r"E": "ε", r"Z": "ζ", r"H": "η",
+    r"Q": "θ", r"I": "ι", r"K": "κ", r"L": "λ", r"M": "μ", r"N": "ν", r"C": "ξ",
+    r"O": "ο", r"P": "π", r"R": "ρ", r"S": "σ", r"T": "τ", r"U": "υ", r"F": "φ",
+    r"X": "χ", r"Y": "ψ", r"W": "ω", r"V": chr(0x03DD),  # Digamma
+
+}
+
+diacriticals = {
     r")": chr(0x0313),  # 'Smooth breathing',
     r"(": chr(0x0314),  # 'Rough breathing',
     r"/": chr(0x0301),  # 'Acute',
@@ -40,6 +23,9 @@ mappings = {
     "+": chr(0x308),  # 'diaresis'
     "|": chr(0x345),  # 'Iota subscript',
     "?": chr(0x323),  # 'Dot below',
+}
+
+punctuation = {
     r",": chr(0x002C),  # comma,
     r".": chr(0x002E),  # 'Period',
     r",": chr(0x2019),  # 'Apostrophe',
@@ -47,8 +33,18 @@ mappings = {
     r";": chr(0x003B),  # 'Question Mark',
     r"-": chr(0x2010),  # 'Hyphen',
     r"_": chr(0x2014),  # 'Em-Dash',
-    r" ": " ",  #'Space',
+
 }
+
+white_space = {
+    r" ": " ",  # 'Space',
+}
+
+mappings = {}
+mappings.update(letters)
+mappings.update(diacriticals)
+mappings.update(punctuation)
+mappings.update(white_space)
 
 test_value = "e)Mo/lon *samfis s3jac #867"
 
@@ -90,8 +86,9 @@ def convert_betacode_to_unicode(string_value: str) -> str:
         else:
             new_character = mappings.get(character_value)
         if capitalize_next:
-            new_character = new_character.upper()
-            capitalize_next = False
+            if new_character not in diacriticals.values():
+                new_character = new_character.upper()
+                capitalize_next = False
         output_value.append(new_character)
     output_value = "".join(output_value)
     output_value = unicodedata.normalize("NFC", output_value)
