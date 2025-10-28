@@ -3,8 +3,6 @@ import unicodedata
 
 from betacode_converter.hash_code_mappings import hash_code_mappings
 
-"""
-"""
 
 letters = {
     r"A": "α", r"B": "β", r"G": "γ", r"D": "δ", r"E": "ε", r"Z": "ζ", r"H": "η",
@@ -45,8 +43,6 @@ mappings.update(letters)
 mappings.update(diacriticals)
 mappings.update(punctuation)
 mappings.update(white_space)
-
-test_value = "e)Mo/lon *samfis s3jac #867"
 
 
 def convert_betacode_to_unicode(string_value: str) -> str:
