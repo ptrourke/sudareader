@@ -4,7 +4,7 @@ import unicodedata
 from betacode_converter.hash_code_mappings import hash_code_mappings
 
 # Use chr() rather than character literals for precision.
-letter_mappings = {
+greek_mappings = {
     r"A": chr(0x03B1),  # α alpha,
     r"B": chr(0x03B2),  # β beta,
     r"G": chr(0x03B3),  # γ gamma,
@@ -68,7 +68,7 @@ escape_codes_and_defaults = {
 }
 
 mappings = {}
-mappings.update(letter_mappings)
+mappings.update(greek_mappings)
 mappings.update(combining_diacritical_mappings)
 mappings.update(punctuation)
 mappings.update(white_space)
