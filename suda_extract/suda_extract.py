@@ -83,6 +83,15 @@ class ExtractEntry(object):
         )
         return translated_headword
 
+    def get_translator(self):
+        translator = self.get_values_between_strong_and_linebreak(
+            'Translated by'
+        )
+        translator = ''.join([etree.tostring(
+            item
+        ).decode('utf-8') for item in translator.getchildren()])
+        return str(translator)
+
     def get_translation(self):
         # TODO: Process Greek
         translation = self.get_by_div_class_name('translation')
@@ -174,6 +183,7 @@ class ExtractEntry(object):
             'notes': self.get_notes(),
             'references':self.get_references(),
             'keywords': self.get_keywords(),
+            'translator': self.get_translator()
         }
         return lemma
 
