@@ -121,8 +121,49 @@ class ExtractEntry(object):
     def get_vetting_status(self):
         return self.get_strong_element_text('Vetting Status: ')
 
+    def get_from_strong_to_next_strong(self, strong_text, next_strong_text):
+        new_fragment = ''
+        page_text = str(etree.tostring(self.page_body))
+        subpattern = re.compile(
+            f'<strong>{strong_text}[^<]*</strong>(.*?)<strong>{next_strong_text}'
+        )
+        new_fragment_match = subpattern.search(page_text)
+        if new_fragment_match:
+            new_fragment_match_value = new_fragment_match.group(1)
+            new_fragment += new_fragment_match_value
+        return new_fragment
+
+    def get_associated_internet_address(self):
+        associated_add = self.get_from_strong_to_next_strong(
+            'Associated internet address: ',
+            'Keywords: '
+        )
+        associated_add_elements = etree.fromstring(associated_add, htmlparser)
+        add_list = associated_add_elements.find('body').findall('a')
+        associated_addresses = []
+        for add in add_list:
+            href = add.get('href')
+            text = add.text
+            associated_addresses.append({'href': href, 'text': text})
+        return associated_addresses
+
+    def get_keywords(self):
+        keywords_raw = self.get_from_strong_to_next_strong(
+            'Keywords: ',
+            'Translated by'
+        )
+        keyword_elements = etree.fromstring(keywords_raw, htmlparser)
+        add_list = keyword_elements.find('body').findall('a')
+        keywords = []
+        for add in add_list:
+            text = add.text
+            keywords.append(text)
+        return keywords
+
+
     def get_lemma_attributes(self):
         lemma = {
+            'associated_internet_addresses': self.get_associated_internet_address(),
             'adler_number': self.get_adler_number(),
             'headword': self.get_headword(),
             'translated_headword': self.get_translated_headword(),
@@ -132,6 +173,7 @@ class ExtractEntry(object):
             'translation': self.get_translation(),
             'notes': self.get_notes(),
             'references':self.get_references(),
+            'keywords': self.get_keywords(),
         }
         return lemma
 
