@@ -4,7 +4,7 @@ import unicodedata
 from betacode_converter.hash_code_mappings import hash_code_mappings
 
 
-letters = {
+letter_mappings = {
     r"A": chr(0x03B1),  #  α alpha,
     r"B": chr(0x03B2),  # β beta,
     r"G": chr(0x03B3),  # γ gamma,
@@ -30,38 +30,44 @@ letters = {
     r"Y": chr(0x03C8),  # "ψ" psi,
     r"W": chr(0x03C9),  # "ω" omega,
     r"V": chr(0x03DD),  # digamma
-
 }
 
-diacriticals = {
-    r")": chr(0x0313),  # 'Smooth breathing',
-    r"(": chr(0x0314),  # 'Rough breathing',
-    r"/": chr(0x0301),  # 'Acute',
-    r"\\": chr(0x0300),  # 'Grave',
-    "=": chr(0x0342),  # 'Circumflex',
-    "+": chr(0x308),  # 'diaresis'
-    "|": chr(0x345),  # 'Iota subscript',
-    "?": chr(0x323),  # 'Dot below',
+# The relevant Betacode values for diacriticals are
+# converted to the Unicode values for the analogous combining
+# diacritical, but then the string is normalized to NFC pre-composed
+# characters.
+combining_diacritical_mappings = {
+    r")": chr(0x0313),  # ̓  'smooth breathing'
+    r"(": chr(0x0314),  # ̔  'rough breathing'
+    r"/": chr(0x0301),  #  ́ 'acute'
+    r"\\": chr(0x0300),  #  ̀ 'grave'
+    "=": chr(0x0342),  # ͂ 'circumflex',
+    "+": chr(0x308),  #  ̈ 'diaresis'
+    "|": chr(0x345),  # ͅ 'iota subscript',
+    "?": chr(0x323),  #  ̣ 'dot below',
 }
 
 punctuation = {
-    r",": chr(0x002C),  # comma,
-    r".": chr(0x002E),  # 'Period',
-    r"'": chr(0x2019),  # 'Apostrophe',
-    r":": chr(0x00B7),  # 'Colon',
-    r";": chr(0x003B),  # 'Question Mark',
-    r"-": chr(0x2010),  # 'Hyphen',
-    r"_": chr(0x2014),  # 'Em-Dash',
-
+    r",": chr(0x002C),  # , comma
+    r".": chr(0x002E),  # . period
+    r"'": chr(0x2019),  # ' apostrophe
+    r":": chr(0x00B7),  # · colon
+    r";": chr(0x003B),  # ; question mark
+    r"-": chr(0x2010),  # ‐ hyphen
+    r"_": chr(0x2014),  # — em-dash
 }
 
 white_space = {
     r" ": " ",  # 'Space',
 }
 
+escape_codes_and_defaults = {
+    '#': {'table': hash_code_mappings, 'default': chr(0x0374)},  # combining Greek number diacritical  noqa E501
+}
+
 mappings = {}
-mappings.update(letters)
-mappings.update(diacriticals)
+mappings.update(letter_mappings)
+mappings.update(combining_diacritical_mappings)
 mappings.update(punctuation)
 mappings.update(white_space)
 
@@ -92,18 +98,27 @@ def convert_betacode_to_unicode(string_value: str) -> str:
                 new_character = chr(0x03F2)
             else:
                 new_character = chr(0x03C3)
-        elif character_value in "#":
+        elif character_value in escape_codes_and_defaults.keys():
             if next_value not in "0123456789":
-                new_character = chr(0x0374)
+                new_character = escape_codes_and_defaults.get(
+                    character_value
+                ).get(
+                    'default'
+                )
             else:
-                num_match = re.search(r"[0123456789]+", string_value[index:])
+                num_match = re.search(
+                    r"[0123456789]+", string_value[index:]
+                )
                 if num_match:
                     special_char_number = num_match.group(0)
-                    new_character = hash_code_mappings.get(int(special_char_number))
+                    mapping_table = escape_codes_and_defaults.get(
+                        character_value
+                    ).get('table')
+                    new_character = mapping_table.get(int(special_char_number))
         else:
             new_character = mappings.get(character_value)
         if capitalize_next:
-            if new_character not in diacriticals.values():
+            if new_character not in combining_diacritical_mappings.values():
                 new_character = new_character.upper()
                 capitalize_next = False
         output_value.append(new_character)
