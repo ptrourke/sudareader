@@ -107,6 +107,11 @@ class ExtractEntry(object):
         references = etree.tostring(references).decode('utf-8')
         return str(references)
 
+    def get_vetting_history(self):
+        vetting_history = self.get_by_div_class_name('editor')
+        vetting_history = etree.tostring(vetting_history).decode('utf-8')
+        return str(vetting_history)
+
     def get_greek_original(self):
         greek_original_element = self.get_by_div_class_name('greek')
         greek_original = greek_original_element.text
@@ -122,6 +127,7 @@ class ExtractEntry(object):
             'headword': self.get_headword(),
             'translated_headword': self.get_translated_headword(),
             'vetting_status': self.get_vetting_status(),
+            'vetting_history': self.get_vetting_history(),
             'greek_original': self.get_greek_original(),
             'translation': self.get_translation(),
             'notes': self.get_notes(),
