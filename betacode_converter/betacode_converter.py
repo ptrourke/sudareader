@@ -96,4 +96,5 @@ def convert_betacode_to_unicode(string_value: str) -> str:
         output_value.append(new_character)
     output_value = ''.join(output_value)
     output_value = unicodedata.normalize('NFC', output_value)
+    output_value = output_value.strip()
     return output_value

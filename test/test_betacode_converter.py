@@ -18,7 +18,7 @@ class TestBetaCodeConverter(unittest.TestCase):
             },
             {
                 'test_value': r'*ma/gos: ma/gous e)ka/loun tou\\s yeudei=s fantasi/as peritiqe/ntas e(autoi=s. a)po\\ tou/tou de\ kai\ tou\s farmakou\\s ma/gous e)/legon. *sofoklh=s: u(fei\s ma/gon toio/nde mhxanorra/fon. ',
-                'expected_result': 'Μάγος· μάγους ἐκάλουν τους ψευδεῖς φαντασίας περιτιθέντας ἑαυτοῖς. ἀπο τούτου δε και τους φαρμακους μάγους ἔλεγον. Σοφοκλῆς· ὑφεις μάγον τοιόνδε μηχανορράφον. '
+                'expected_result': 'Μάγος· μάγους ἐκάλουν τους ψευδεῖς φαντασίας περιτιθέντας ἑαυτοῖς. ἀπο τούτου δε και τους φαρμακους μάγους ἔλεγον. Σοφοκλῆς· ὑφεις μάγον τοιόνδε μηχανορράφον.'
             }
         ]
         for test_vector in test_vectors:
