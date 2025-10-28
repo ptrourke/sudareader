@@ -30,7 +30,7 @@ class TestBetaCodeConverter(unittest.TestCase):
             },
             {
                 "test_value": r"*(ruka/na: tektoniko\n e)rgalei=on. kai\ pe/lekun, r(uka/nan t' eu)age/a, kai\ periage\s tru/panon. qhlukw=s h( r(uka/na. ",  # noqa E501
-                "expected_result": "̔Ρυκάνα· τεκτονικον ἐργαλεῖον. και πέλεκυν, ῥυκάναν τ εὐαγέα, και περιαγες τρύπανον. θηλυκῶς ἡ ῥυκάνα.",  # noqa E501
+                "expected_result": "̔Ρυκάνα· τεκτονικον ἐργαλεῖον. και πέλεκυν, ῥυκάναν τ’ εὐαγέα, και περιαγες τρύπανον. θηλυκῶς ἡ ῥυκάνα.",  # noqa E501
                 "comment": "Definition rho 289: Rhukana"
             }
         ]

@@ -28,7 +28,7 @@ diacriticals = {
 punctuation = {
     r",": chr(0x002C),  # comma,
     r".": chr(0x002E),  # 'Period',
-    r",": chr(0x2019),  # 'Apostrophe',
+    r"'": chr(0x2019),  # 'Apostrophe',
     r":": chr(0x00B7),  # 'Colon',
     r";": chr(0x003B),  # 'Question Mark',
     r"-": chr(0x2010),  # 'Hyphen',
