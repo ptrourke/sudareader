@@ -34,8 +34,9 @@ letter_mappings = {
 
 # The relevant Betacode values for diacriticals are
 # converted to the Unicode values for the analogous combining
-# diacritical, but then the string is normalized to NFC pre-composed
-# characters.
+# diacritical, but then if the value for the parameter `normalize_nfc` is True
+# (which is the default), the string is normalized to NFC pre-composed
+# characters, otherwise the string is normalized to NFD combining characters.
 combining_diacritical_mappings = {
     r")": chr(0x0313),  # ̓  'smooth breathing'
     r"(": chr(0x0314),  # ̔  'rough breathing'
@@ -75,7 +76,10 @@ mappings.update(white_space)
 all_chars = list(mappings.keys()) + list(escape_codes_and_defaults.keys())
 word_endings = list(punctuation.keys()) + list(white_space.keys())
 
-def convert_betacode_to_unicode(string_value: str) -> str:
+def convert_betacode_to_unicode(
+        string_value: str,
+        normalize_nfc: bool = True
+) -> str:
     output_value = []
     string_value = string_value.upper()
     capitalize_next = False
@@ -127,6 +131,9 @@ def convert_betacode_to_unicode(string_value: str) -> str:
                 capitalize_next = False
         output_value.append(new_character)
     output_value = "".join(output_value)
-    output_value = unicodedata.normalize("NFC", output_value)
+    if normalize_nfc:
+        output_value = unicodedata.normalize("NFC", output_value)
+    else:
+        output_value = unicodedata.normalize("NFD", output_value)
     output_value = output_value.strip()
     return output_value
