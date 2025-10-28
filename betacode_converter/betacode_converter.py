@@ -1,7 +1,14 @@
 import re
 import unicodedata
 
-from betacode_converter.hash_code_mappings import hash_code_mappings
+from betacode_converter.additional_character_mappings import additional_character_mappings  # noqa E501
+
+# betacode_converter
+# Betacode to Unicode UTF-8 NFC converter for Suda On Line entries
+# Patrick T. Rourke (ptrourke@methymna.com)
+# See LICENSE.md for license information
+# Part of sudareader
+# Implementation targets python 3.12
 
 # Use chr() rather than character literals for precision.
 greek_mappings = {
@@ -64,7 +71,7 @@ white_space = {
 }
 
 escape_codes_and_defaults = {
-    '#': {'table': hash_code_mappings, 'default': chr(0x0374)},  # combining Greek number diacritical  noqa E501
+    '#': {'table': additional_character_mappings, 'default': chr(0x0374)},  # combining Greek number diacritical  noqa E501
 }
 
 mappings = {}
