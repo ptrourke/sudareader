@@ -1,4 +1,5 @@
 import unittest
+
 from betacode_converter import betacode_converter
 
 
@@ -22,6 +23,9 @@ class TestBetaCodeConverter(unittest.TestCase):
                 "expected_result": "Μάγος· μάγους ἐκάλουν τους ψευδεῖς φαντασίας περιτιθέντας ἑαυτοῖς. ἀπο τούτου δε και τους φαρμακους μάγους ἔλεγον. Σοφοκλῆς· ὑφεις μάγον τοιόνδε μηχανορράφον.",  # noqa E501
                 "comment": "Definition mu 25: Magos",
             },
+            {
+
+            }
         ]
         for test_vector in test_vectors:
             test_value = test_vector["test_value"]

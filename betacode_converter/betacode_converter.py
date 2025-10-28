@@ -1,5 +1,5 @@
-import unicodedata
 import re
+import unicodedata
 
 from betacode_converter.hash_code_mappings import hash_code_mappings
 
