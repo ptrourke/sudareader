@@ -59,6 +59,16 @@ class ExtractEntry(object):
             new_fragment.append(next_element)
         return new_fragment
 
+    def convert_inline_greek(self, fragment):
+        for child in fragment:
+            if child.tag == 'g':
+                greek_text = child.text
+                greek_text = convert_betacode_to_unicode(greek_text)
+                new_greek_text_element = etree.Element('em')
+                new_greek_text_element.text = greek_text
+                fragment.replace(child, new_greek_text_element)
+        return fragment
+
     def get_adler_number(self):
         adler_fragment = self.get_values_between_strong_and_linebreak(
             "Adler number: "
@@ -89,12 +99,13 @@ class ExtractEntry(object):
         )
         translator = ''.join([etree.tostring(
             item
-        ).decode('utf-8') for item in translator.getchildren()])
+        ).decode('utf-8') for item in list(translator)])
         return str(translator)
 
     def get_translation(self):
         # TODO: Process Greek
         translation = self.get_by_div_class_name('translation')
+        translation = self.convert_inline_greek(translation)
         translation = etree.tostring(translation).decode('utf-8')
         return str(translation)
 
@@ -104,15 +115,16 @@ class ExtractEntry(object):
         # TODO: Process links to cross-references
         # TODO: Processing links to Perseus
         notes = self.get_by_div_class_name('notes')
+        notes = self.convert_inline_greek(notes)
         notes = etree.tostring(notes).decode('utf-8')
         return str(notes)
 
     def get_references(self):
         # TODO: Split notes by note number
-        # TODO: Process Greek
         # TODO: Process links to cross-references
         # TODO: Processing links to Perseus
         references = self.get_by_div_class_name('bibliography')
+        references = self.convert_inline_greek(references)
         references = etree.tostring(references).decode('utf-8')
         return str(references)
 
