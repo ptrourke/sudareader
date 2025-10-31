@@ -22,6 +22,11 @@ class ExtractEntry(object):
             self,
             element_class_name: str
     ) -> etree.Element:
+        """
+        Helper method that takes an element class name, searches the
+        document for the first element with that class name, and returns
+        that element as an etree Element.
+        """
         div_element = self.page_body.xpath(
             f'//div[@class="{element_class_name}"]'
         )[0]
