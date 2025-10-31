@@ -312,7 +312,18 @@ class ExtractEntry(object):
         return str(vetting_history_text).strip()
 
     def get_vetting_status(self) -> str:
-        vetting_status: str = self.extract_strong_element_text('Vetting Status: ')
+        """
+        Returns the vetting status as a string with one of the following values:
+        - draft
+        - low
+        - high
+        If the vetting status isn't found, raises an exception.
+        """
+        vetting_status: str = self.extract_strong_element_text(
+            'Vetting Status: '
+        )
+        if not vetting_status in ["draft", "low", "high"]:
+            raise Exception('Unable to extract vetting_status')
         return vetting_status
 
     def get_lemma_attributes(self) -> dict:

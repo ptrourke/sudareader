@@ -188,3 +188,15 @@ class TestExtractEntry(unittest.TestCase):
             actual_result = test_file.get_vetting_history()
             self.assertEqual(expected_result, actual_result)
 
+    def test_get_vetting_status(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": 'high'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result = test_file.get_vetting_status()
+            self.assertEqual(expected_result, actual_result)
