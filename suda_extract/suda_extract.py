@@ -166,7 +166,7 @@ class ExtractEntry(object):
 
     def get_adler_reference(self) -> str:
         """
-        Get the Adler reference in the form `'{letter}, {number}'`
+        Returns the Adler reference in the form `'{letter}, {number}'`
         """
         adler_fragment: etree.Element = self.extract_values_btw_strong_br(
             "Adler number: "
@@ -177,9 +177,41 @@ class ExtractEntry(object):
         adler_number: str = f'{adler_letter},{adler_item}'
         return adler_number
 
+    def get_associated_internet_addresses(self) -> list:
+        """
+        Get associated internet addresseses as a list of dictionary items,
+        one per address, with the attributes `href` and `text`, in the form:
+        ```
+            [
+                {
+                    'href':
+                        'https://{URL}',
+                        'text': 'Web address {ref number}'
+                }
+            ]
+        ```
+        # TODO: Change format to `{ref_number}: '{url}'`
+        """
+        associated_add: str = self.extract_from_strong_to_next_strong(
+            'Associated internet address: ',
+            'Keywords: '
+        )
+        assoc_add_text: etree.Element = etree.fromstring(
+            associated_add,
+            htmlparser,
+
+        )
+        add_elem_list: etree.Element = assoc_add_text.find('body').findall('a')
+        associated_addresses: list = []
+        for add_elem in add_elem_list:
+            href: str = add_elem.get('href')
+            text: str = add_elem.text
+            associated_addresses.append({'href': href, 'text': text})
+        return associated_addresses
+
     def get_greek_original(self) -> str:
         """
-        Get the Greek original of the definition as a unicode UTF-8 string.
+        Returns the Greek original of the definition as a unicode UTF-8 string.
         """
         greek_original_text: str = ''
         greek_original_element: etree.Element = self.extract_by_div_class_name('greek')
@@ -190,6 +222,9 @@ class ExtractEntry(object):
         return greek_original_text
 
     def get_headword(self) -> str:
+        """
+        Returns the headword in Greek as a Unicode UTF-8 string.
+        """
         headword_fragment: etree.Element = self.extract_values_btw_strong_br(
             "Headword:"
         )
@@ -239,24 +274,6 @@ class ExtractEntry(object):
         vetting_status: str = self.extract_strong_element_text('Vetting Status: ')
         return vetting_status
 
-    def get_associated_internet_address(self) -> list:
-        associated_add: str = self.extract_from_strong_to_next_strong(
-            'Associated internet address: ',
-            'Keywords: '
-        )
-        assoc_add_text: etree.Element = etree.fromstring(
-            associated_add,
-            htmlparser,
-
-        )
-        add_elem_list: etree.Element = assoc_add_text.find('body').findall('a')
-        associated_addresses: list = []
-        for add_elem in add_elem_list:
-            href: str = add_elem.get('href')
-            text: str = add_elem.text
-            associated_addresses.append({'href': href, 'text': text})
-        return associated_addresses
-
     def get_keywords(self) -> list:
         keywords: list = []
         keywords_raw: str = self.extract_from_strong_to_next_strong(
@@ -280,7 +297,7 @@ class ExtractEntry(object):
 
     def get_lemma_attributes(self) -> dict:
         lemma = {
-            'associated_internet_addresses': self.get_associated_internet_address(),
+            'associated_internet_addresses': self.get_associated_internet_addresses(),
             'adler_reference': self.get_adler_reference(),
             'headword': self.get_headword(),
             'translated_headword': self.get_translated_headword(),

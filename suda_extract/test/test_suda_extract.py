@@ -38,6 +38,27 @@ class TestExtractEntry(unittest.TestCase):
             actual_result = test_file.get_adler_reference()
             self.assertEqual(expected_result, actual_result)
 
+    def test_get_associated_internet_addresses(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": [
+                    {
+                        'href':
+                            'https://www.perseus.tufts.edu/hopper/text?'
+                            'doc=Perseus:text:1999.04.0057:entry=eu)agh/s3',
+                        'text': 'Web address 1'
+                    }
+                ]  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result = test_file.get_associated_internet_addresses()
+            self.assertEqual(expected_result, actual_result)
+
+
     def test_get_greek_original(self):
         test_vectors = [
             {
