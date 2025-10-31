@@ -27,6 +27,20 @@ class TestExtractEntry(unittest.TestCase):
             actual_result = ExtractEntry.modify_sol_href(test_value)
             self.assertEqual(expected_result, actual_result)
 
+    def test_get_adler_reference(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": 'rho,289'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result = test_file.get_adler_reference()
+            self.assertEqual(expected_result, actual_result)
+
+
     def test_get_translator(self):
         test_vectors = [
             {

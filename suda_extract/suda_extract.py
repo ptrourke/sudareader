@@ -1,7 +1,5 @@
-import copy
 from lxml import etree
 import re
-from yaml import safe_load
 from yaml import safe_dump
 from betacode_converter.betacode_converter import convert_betacode_to_unicode
 
@@ -20,13 +18,16 @@ class ExtractEntry(object):
             page_body = self.convert_suda_urls(page_body)
             self.page_body: etree.Element = page_body
 
-    def get_by_div_class_name(self, element_class_name: str) -> etree.Element:
+    def extract_by_div_class_name(
+            self,
+            element_class_name: str
+    ) -> etree.Element:
         div_element = self.page_body.xpath(
             f'//div[@class="{element_class_name}"]'
         )[0]
         return div_element
 
-    def get_strong_element_text(self, strong_text) -> str:
+    def extract_strong_element_text(self, strong_text) -> str:
         vetting_status:str = ""
         strong_element = self.page_body.xpath(
             f'//strong[contains(text(), "{strong_text}")]'
@@ -37,7 +38,26 @@ class ExtractEntry(object):
             ).strip()
         return vetting_status
 
-    def get_text_between_strong_and_linebreak(self, strong_text: str) -> str:
+    def extract_from_strong_to_next_strong(
+            self,
+            strong_text: str,
+            next_strong_text: str
+    ) -> str:
+        text_value: str = ''
+        page_text: str = str(etree.tostring(self.page_body))
+        subpattern = re.compile(
+            f'<strong>{strong_text}[^<]*</strong>(.*?)<strong>{next_strong_text}'
+        )
+        text_match: re.Match = subpattern.search(page_text)
+        if text_match:
+            text_match_value: str = text_match.group(1)
+            text_value += text_match_value
+        return text_value
+
+    def extract_text_between_strong_and_linebreak(
+            self,
+            strong_text: str
+    ) -> str:
         text_value: str = ''
         page_text = str(etree.tostring(self.page_body))
         subpattern = re.compile(
@@ -49,8 +69,10 @@ class ExtractEntry(object):
             text_value += text_value_match_value
         return text_value
 
-
-    def get_values_btw_strong_br(self, strong_text: str) -> etree.Element:
+    def extract_values_btw_strong_br(
+        self,
+        strong_text: str
+    ) -> etree.Element:
         element_name: str = re.sub(r'[^A-Za-z ]', '', strong_text)
         element_name = element_name.title()
         element_name = element_name.replace(' ', '')
@@ -65,15 +87,6 @@ class ExtractEntry(object):
                 continue
             new_fragment.append(next_element)
         return new_fragment
-
-    def convert_suda_urls(self, fragment: etree.Element) -> etree.Element:
-        anchor_elements = fragment.xpath("//a")
-        for element_item in anchor_elements:
-            if element_item.tag == "a":
-                href_value = element_item.get("href")
-                href_value = self.modify_sol_href(href_value)
-                element_item.attrib["href"] = href_value
-        return fragment
 
     @staticmethod
     def modify_sol_href(href_value: str) -> str:
@@ -130,6 +143,15 @@ class ExtractEntry(object):
             href_value = f"/credits/{adler_letter}/{adler_number}/"
         return href_value
 
+    def convert_suda_urls(self, fragment: etree.Element) -> etree.Element:
+        anchor_elements = fragment.xpath("//a")
+        for element_item in anchor_elements:
+            if element_item.tag == "a":
+                href_value = element_item.get("href")
+                href_value = self.modify_sol_href(href_value)
+                element_item.attrib["href"] = href_value
+        return fragment
+
     def convert_inline_greek(self, fragment: etree.Element) -> etree.Element:
         inline_greek_elements = fragment.xpath('//g')
         for element_item in inline_greek_elements:
@@ -142,8 +164,8 @@ class ExtractEntry(object):
                 parent_element.replace(element_item, new_greek_text_element)
         return fragment
 
-    def get_adler_number(self) -> str:
-        adler_fragment: etree.Element = self.get_values_btw_strong_br(
+    def get_adler_reference(self) -> str:
+        adler_fragment: etree.Element = self.extract_values_btw_strong_br(
             "Adler number: "
         )
         adler_number_parts: list = adler_fragment.findall('span')
@@ -153,7 +175,7 @@ class ExtractEntry(object):
         return adler_number
 
     def get_headword(self) -> str:
-        headword_fragment: etree.Element = self.get_values_btw_strong_br(
+        headword_fragment: etree.Element = self.extract_values_btw_strong_br(
             "Headword:"
         )
         headword: str = headword_fragment.findtext('a')
@@ -161,13 +183,13 @@ class ExtractEntry(object):
         return headword
 
     def get_translated_headword(self) -> str:
-        translated_headword: str = self.get_text_between_strong_and_linebreak(
+        translated_headword: str = self.extract_text_between_strong_and_linebreak(
             "Translated headword:"
         )
         return translated_headword
 
     def get_translator(self) -> str:
-        translator: etree.Element = self.get_values_btw_strong_br(
+        translator: etree.Element = self.extract_values_btw_strong_br(
             'Translated by'
         )
         item: etree.Element
@@ -177,30 +199,30 @@ class ExtractEntry(object):
         return str(translator_name)
 
     def get_translation(self) -> str:
-        translation:etree.Element = self.get_by_div_class_name('translation')
+        translation:etree.Element = self.extract_by_div_class_name('translation')
         translation_text: str = etree.tostring(translation).decode('utf-8')
         return str(translation_text)
 
     def get_notes(self):
         # TODO: Split notes by note number
-        notes = self.get_by_div_class_name('notes')
+        notes = self.extract_by_div_class_name('notes')
         notes = etree.tostring(notes).decode('utf-8')
         return str(notes)
 
     def get_references(self) -> str:
         # TODO: Split notes by note number
-        references: etree.Element = self.get_by_div_class_name('bibliography')
+        references: etree.Element = self.extract_by_div_class_name('bibliography')
         reference_text: str = etree.tostring(references).decode('utf-8')
         return str(reference_text)
 
     def get_vetting_history(self) -> str:
-        vetting_history: etree.Element = self.get_by_div_class_name('editor')
+        vetting_history: etree.Element = self.extract_by_div_class_name('editor')
         vetting_history_text: str = etree.tostring(vetting_history).decode('utf-8')
         return str(vetting_history_text)
 
     def get_greek_original(self) -> str:
         greek_original_text: str = ''
-        greek_original_element: etree.Element = self.get_by_div_class_name('greek')
+        greek_original_element: etree.Element = self.extract_by_div_class_name('greek')
         if not greek_original_element.text:
             return greek_original_text
         greek_original_text = greek_original_element.text
@@ -208,27 +230,11 @@ class ExtractEntry(object):
         return greek_original_text
 
     def get_vetting_status(self) -> str:
-        vetting_status: str = self.get_strong_element_text('Vetting Status: ')
+        vetting_status: str = self.extract_strong_element_text('Vetting Status: ')
         return vetting_status
 
-    def get_from_strong_to_next_strong(
-            self,
-            strong_text: str,
-            next_strong_text: str
-    ) -> str:
-        text_value: str = ''
-        page_text: str = str(etree.tostring(self.page_body))
-        subpattern = re.compile(
-            f'<strong>{strong_text}[^<]*</strong>(.*?)<strong>{next_strong_text}'
-        )
-        text_match: re.Match = subpattern.search(page_text)
-        if text_match:
-            text_match_value: str = text_match.group(1)
-            text_value += text_match_value
-        return text_value
-
     def get_associated_internet_address(self) -> list:
-        associated_add: str = self.get_from_strong_to_next_strong(
+        associated_add: str = self.extract_from_strong_to_next_strong(
             'Associated internet address: ',
             'Keywords: '
         )
@@ -247,7 +253,7 @@ class ExtractEntry(object):
 
     def get_keywords(self) -> list:
         keywords: list = []
-        keywords_raw: str = self.get_from_strong_to_next_strong(
+        keywords_raw: str = self.extract_from_strong_to_next_strong(
             'Keywords: ',
             'Translated by'
         )
@@ -269,7 +275,7 @@ class ExtractEntry(object):
     def get_lemma_attributes(self) -> dict:
         lemma = {
             'associated_internet_addresses': self.get_associated_internet_address(),
-            'adler_number': self.get_adler_number(),
+            'adler_reference': self.get_adler_reference(),
             'headword': self.get_headword(),
             'translated_headword': self.get_translated_headword(),
             'vetting_status': self.get_vetting_status(),
@@ -283,8 +289,8 @@ class ExtractEntry(object):
         }
         return lemma
 
-lemma = ExtractEntry(f'{EXTRACT_SOURCE_FILES}/rho/289')
-print(safe_dump(lemma.get_lemma_attributes(), allow_unicode=True))
+# lemma = ExtractEntry(f'{EXTRACT_SOURCE_FILES}/rho/289')
+# print(safe_dump(lemma.get_lemma_attributes(), allow_unicode=True))
 
 
 
