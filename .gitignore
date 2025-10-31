@@ -1,3 +1,4 @@
 .idea/
 _env/
 sol-entries/
+local_settings.py

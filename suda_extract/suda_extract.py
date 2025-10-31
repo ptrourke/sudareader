@@ -5,13 +5,14 @@ from yaml import safe_load
 from yaml import safe_dump
 from betacode_converter.betacode_converter import convert_betacode_to_unicode
 
-htmlparser = etree.HTMLParser(encoding="utf-8")
+from settings import EXTRACT_SOURCE_FILES
 
+htmlparser = etree.HTMLParser(encoding="utf-8")
 
 class ExtractEntry(object):
 
     def __init__(self, page_path: str) -> None:
-        page_path = f'/home/ptrourke/workspace/github.com/ptrourke/sudareader/sol-entries/{page_path}'
+        page_path = f'{EXTRACT_SOURCE_FILES}/{page_path}'
         with open(page_path, 'r') as raw_page_handle:
             raw_page: str = raw_page_handle.read()
             root: etree.Element = etree.fromstring(raw_page, htmlparser)
@@ -191,8 +192,6 @@ class ExtractEntry(object):
 
     def get_references(self) -> str:
         # TODO: Split notes by note number
-        # TODO: Process links to cross-references
-        # TODO: Processing links to Perseus
         references: etree.Element = self.get_by_div_class_name('bibliography')
         reference_text: str = etree.tostring(references).decode('utf-8')
         return str(reference_text)

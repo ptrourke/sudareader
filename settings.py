@@ -3,3 +3,8 @@ VAULT = None
 
 # Directory where the sol-entries files are kept to be extracted.
 EXTRACT_SOURCE_FILES = VAULT
+
+try:
+    from local_settings import *
+except:
+    pass
