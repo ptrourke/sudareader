@@ -265,7 +265,7 @@ class ExtractEntry(object):
         return str(notes)
 
     def get_references(self) -> str:
-        # TODO: Split notes by note number
+        # TODO: Split references, return as a list
         references: etree.Element = self.extract_by_div_class_name('bibliography')
         reference_text: str = etree.tostring(references).decode('utf-8')
         return str(reference_text)

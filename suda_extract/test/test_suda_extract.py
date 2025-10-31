@@ -120,6 +120,21 @@ class TestExtractEntry(unittest.TestCase):
             actual_result = test_file.get_notes()
             self.assertEqual(expected_result, actual_result)
 
+    def test_get_references(self):
+        self.maxDiff = None
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result":
+                    '<div class="bibliography">A.S.F. Gow and D.L. Page, eds., <i>The Greek Anthology: Hellenistic Epigrams</i>, vol. I, (Cambridge, 1965)<br />\nA.S.F. Gow and D.L. Page, eds., <i>The Greek Anthology: Hellenistic Epigrams</i>, vol. II, (Cambridge, 1965)<br />\nW.R. Paton, ed. <i>The Greek Anthology: Books I-VI</i>, (Cambridge, MA, 1999)</div>\n'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result = test_file.get_references()
+            self.assertEqual(expected_result, actual_result)
+
     def test_get_translator(self):
         test_vectors = [
             {
