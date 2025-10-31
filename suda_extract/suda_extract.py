@@ -271,10 +271,19 @@ class ExtractEntry(object):
         return str(reference_text)
 
     def get_translated_headword(self) -> str:
+        """
+        Return the English translation of the headword as
+        a Unicode UTF-8 string.
+        """
         translated_headword: str = self.extract_text_between_strong_and_linebreak(
             "Translated headword:"
         )
         return translated_headword
+
+    def get_translation(self) -> str:
+        translation:etree.Element = self.extract_by_div_class_name('translation')
+        translation_text: str = etree.tostring(translation).decode('utf-8')
+        return str(translation_text)
 
     def get_translator(self) -> str:
         translator: etree.Element = self.extract_values_btw_strong_br(
@@ -285,11 +294,6 @@ class ExtractEntry(object):
             item
         ).decode('utf-8') for item in list(translator)])
         return str(translator_name)
-
-    def get_translation(self) -> str:
-        translation:etree.Element = self.extract_by_div_class_name('translation')
-        translation_text: str = etree.tostring(translation).decode('utf-8')
-        return str(translation_text)
 
     def get_vetting_history(self) -> str:
         vetting_history: etree.Element = self.extract_by_div_class_name('editor')

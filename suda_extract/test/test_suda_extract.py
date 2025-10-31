@@ -135,17 +135,17 @@ class TestExtractEntry(unittest.TestCase):
             actual_result = test_file.get_references()
             self.assertEqual(expected_result, actual_result)
 
-    def test_get_translator(self):
+    def test_get_translated_headword(self):
         test_vectors = [
             {
                 "test_file": self.rho289,
-                "expected_result": '<a href="/credits/rho/289/">Andrea Consogno</a> on 12 November 2005@02:46:05.'  # noqa E501
+                "expected_result": 'plane'  # noqa E501
             }
         ]
         for test_vector in test_vectors:
             test_file = test_vector["test_file"]
             expected_result = test_vector["expected_result"]
-            actual_result = test_file.get_translator()
+            actual_result = test_file.get_translated_headword()
             self.assertEqual(expected_result, actual_result)
 
     def test_get_translation(self):
@@ -161,3 +161,17 @@ class TestExtractEntry(unittest.TestCase):
             expected_result = test_vector["expected_result"]
             actual_result = test_file.get_translation()
             self.assertEqual(expected_result, actual_result)
+
+    def test_get_translator(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": '<a href="/credits/rho/289/">Andrea Consogno</a> on 12 November 2005@02:46:05.'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result = test_file.get_translator()
+            self.assertEqual(expected_result, actual_result)
+
