@@ -286,6 +286,10 @@ class ExtractEntry(object):
         return str(translation_text)
 
     def get_translator(self) -> str:
+        """
+        Return the translator name with a link to the "credits" endpoint
+        for the current lemma and the translation time and date as a string.
+        """
         translator: etree.Element = self.extract_values_btw_strong_br(
             'Translated by'
         )
