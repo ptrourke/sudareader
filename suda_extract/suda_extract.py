@@ -20,7 +20,7 @@ class ExtractEntry(object):
 
     def convert_suda_urls(self, fragment: etree.Element) -> etree.Element:
         """
-        TODO: Write test and document
+        TODO: Write test and document  #12
         """
         anchor_elements = fragment.xpath("//a")
         for element_item in anchor_elements:
@@ -32,7 +32,7 @@ class ExtractEntry(object):
 
     def convert_inline_greek(self, fragment: etree.Element) -> etree.Element:
         """
-        TODO: Write test and document
+        TODO: Write test and document  #12
         """
         inline_greek_elements = fragment.xpath('//g')
         for element_item in inline_greek_elements:
@@ -147,7 +147,7 @@ class ExtractEntry(object):
 
     @staticmethod
     def modify_inline_greek_text(element_item: etree.Element) -> etree.Element:
-        # TODO: Fix the return value so it's not entities
+        # TODO: Fix the return value so it's not entities  #14
         greek_text = element_item.text
         greek_text = convert_betacode_to_unicode(greek_text)
         new_greek_text_element = etree.Element('em')
@@ -157,6 +157,7 @@ class ExtractEntry(object):
     @staticmethod
     def modify_sol_href(href_value: str) -> str:
         if "~raphael" in href_value:
+            # TODO: Make the hostname string configurable in settings #13
             href_value = href_value.replace("&amp;", "&")
             href_value = href_value.replace("%20", "+")
             href_value = href_value.replace("enlogin=guest&", "")
@@ -239,15 +240,15 @@ class ExtractEntry(object):
         Returns associated internet addresseses as a list of dictionary items,
         one per address, with the attributes `href` and `text`, in the form:
         ```
-            [
-                {
-                    'href':
-                        'https://{URL}',
-                        'text': 'Web address {ref number}'
-                }
-            ]
+        [
+            {
+                'href':
+                    'https://{URL}',
+                    'text': 'Web address {ref number}'
+            }
+        ]
         ```
-        # TODO: Change format to `{ref_number}: '{url}'`
+        # TODO: Change format to `{ref_number}: '{url}'`  #15
         """
         associated_add: str = self.extract_text_between_strong_elements(
             'Associated internet address: ',
@@ -256,7 +257,6 @@ class ExtractEntry(object):
         assoc_add_text: etree.Element = etree.fromstring(
             associated_add,
             htmlparser,
-
         )
         add_elem_list: etree.Element = assoc_add_text.find('body').findall('a')
         associated_addresses: list = []
@@ -322,13 +322,13 @@ class ExtractEntry(object):
         return keywords
 
     def get_notes(self):
-        # TODO: Split notes by note number, return as a list
+        # TODO: Split notes by note number, return as a dict #16
         notes = self.extract_element_by_div_class_name('notes')
         notes = etree.tostring(notes).decode('utf-8')
         return str(notes)
 
     def get_references(self) -> str:
-        # TODO: Split references, return as a list
+        # TODO: Split references, return as a list  #17
         references: etree.Element = self.extract_element_by_div_class_name(
             'bibliography'
         )
