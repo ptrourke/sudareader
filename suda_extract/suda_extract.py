@@ -281,6 +281,10 @@ class ExtractEntry(object):
         return translated_headword
 
     def get_translation(self) -> str:
+        """
+        Get the English translation of the definition as
+        a Unicode UTF-8 string.
+        """
         translation:etree.Element = self.extract_by_div_class_name('translation')
         translation_text: str = etree.tostring(translation).decode('utf-8')
         return str(translation_text)
