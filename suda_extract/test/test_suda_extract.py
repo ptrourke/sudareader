@@ -76,6 +76,26 @@ class TestExtractEntry(unittest.TestCase):
             )
             self.assertEqual(expected_result, actual_result)
 
+    def test_extract_text_between_strong_and_linebreak(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "test_value": "Translated headword:",
+                "expected_result": 'plane'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            test_value = test_vector["test_value"]
+            expected_result = test_vector["expected_result"]
+            actual_result =\
+                test_file.extract_text_between_strong_and_linebreak(
+                    test_value
+                )
+            self.assertEqual(expected_result, actual_result)
+
+
+
     def test_modify_inline_greek_text(self):
         test_vectors = [
             {

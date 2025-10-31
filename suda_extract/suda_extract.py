@@ -65,7 +65,7 @@ class ExtractEntry(object):
         """
         Helper method that takes a string, searches the document for the first
         `<strong>` element with text starting with that string, and returns
-        the XML content between from that element to the next `<br/>` element
+        the XML content from that element to the next `<br/>` element
         as an etree Element.
         """
         element_name: str = re.sub(r'[^A-Za-z ]', '', strong_text)
@@ -111,6 +111,12 @@ class ExtractEntry(object):
             self,
             strong_text: str
     ) -> str:
+        """
+        Helper method that takes a string, searches the document for the first
+        `<strong>` element with text starting with that string, and returns
+        the content from that element to the next `<br/>` element
+        as a Unicode UTF-8 string.
+        """
         text_value: str = ''
         page_text = str(etree.tostring(self.page_body))
         subpattern = re.compile(
