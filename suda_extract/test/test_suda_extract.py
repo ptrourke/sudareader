@@ -31,6 +31,25 @@ class TestExtractEntry(unittest.TestCase):
             ).decode('utf-8').strip()
             self.assertEqual(expected_result, actual_result)
 
+    def test_modify_inline_greek_text(self):
+        test_vectors = [
+            {
+                "test_value": "<g>pepo/tai</g>",  # noqa E501
+                "expected_result": "<em>&#960;&#949;&#960;&#972;&#964;&#945;&#953;</em>",  # noqa E501
+                "preferred_result": "<em>πεπόηται</em>"
+            }
+        ]
+        for test_vector in test_vectors:
+            test_value = test_vector["test_value"]
+            test_value = etree.fromstring(test_value)
+            expected_result = test_vector["expected_result"]
+            actual_result = ExtractEntry.modify_inline_greek_text(test_value)
+            actual_result = etree.tostring(
+                actual_result
+            ).decode('utf-8').strip()
+            self.assertEqual(expected_result, actual_result)
+
+
     def test_modify_sol_href(self):
         test_vectors = [
             {

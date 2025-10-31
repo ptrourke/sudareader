@@ -18,6 +18,26 @@ class ExtractEntry(object):
             page_body = self.convert_suda_urls(page_body)
             self.page_body: etree.Element = page_body
 
+    def convert_suda_urls(self, fragment: etree.Element) -> etree.Element:
+        anchor_elements = fragment.xpath("//a")
+        for element_item in anchor_elements:
+            if element_item.tag == "a":
+                href_value = element_item.get("href")
+                href_value = self.modify_sol_href(href_value)
+                element_item.attrib["href"] = href_value
+        return fragment
+
+    def convert_inline_greek(self, fragment: etree.Element) -> etree.Element:
+        inline_greek_elements = fragment.xpath('//g')
+        for element_item in inline_greek_elements:
+            if element_item.tag == 'g':
+                new_greek_text_element = self.modify_inline_greek_text(
+                    element_item
+                )
+                parent_element = element_item.getparent()
+                parent_element.replace(element_item, new_greek_text_element)
+        return fragment
+
     def extract_element_by_div_class_name(
             self,
             element_class_name: str
@@ -32,49 +52,7 @@ class ExtractEntry(object):
         )[0]
         return div_element
 
-    def extract_from_strong_to_next_strong(
-            self,
-            strong_text: str,
-            next_strong_text: str
-    ) -> str:
-        text_value: str = ''
-        page_text: str = str(etree.tostring(self.page_body))
-        subpattern = re.compile(
-            f'<strong>{strong_text}[^<]*</strong>(.*?)<strong>{next_strong_text}'
-        )
-        text_match: re.Match = subpattern.search(page_text)
-        if text_match:
-            text_match_value: str = text_match.group(1)
-            text_value += text_match_value
-        return text_value
-
-    def extract_strong_element_text(self, strong_text) -> str:
-        vetting_status:str = ""
-        strong_element = self.page_body.xpath(
-            f'//strong[contains(text(), "{strong_text}")]'
-        )[0]
-        if strong_element.text:
-            vetting_status = strong_element.text.replace(
-                strong_text, ''
-            ).strip()
-        return vetting_status
-
-    def extract_text_between_strong_and_linebreak(
-            self,
-            strong_text: str
-    ) -> str:
-        text_value: str = ''
-        page_text = str(etree.tostring(self.page_body))
-        subpattern = re.compile(
-            f'<strong>{strong_text}[^<]*</strong>(.*?)<br ?/>'
-        )
-        text_value_match: re.Match = subpattern.search(page_text)
-        if text_value_match:
-            text_value_match_value: str = text_value_match.group(1)
-            text_value += text_value_match_value
-        return text_value
-
-    def extract_values_btw_strong_br(
+    def extract_elements_between_strong_and_linebreak(
         self,
         strong_text: str
     ) -> etree.Element:
@@ -92,6 +70,57 @@ class ExtractEntry(object):
                 continue
             new_fragment.append(next_element)
         return new_fragment
+
+    def extract_text_between_strong_elements(
+            self,
+            strong_text: str,
+            next_strong_text: str
+    ) -> str:
+        text_value: str = ''
+        page_text: str = str(etree.tostring(self.page_body))
+        subpattern = re.compile(
+            f'<strong>{strong_text}[^<]*</strong>(.*?)<strong>{next_strong_text}'
+        )
+        text_match: re.Match = subpattern.search(page_text)
+        if text_match:
+            text_match_value: str = text_match.group(1)
+            text_value += text_match_value
+        return text_value
+
+    def extract_text_between_strong_and_linebreak(
+            self,
+            strong_text: str
+    ) -> str:
+        text_value: str = ''
+        page_text = str(etree.tostring(self.page_body))
+        subpattern = re.compile(
+            f'<strong>{strong_text}[^<]*</strong>(.*?)<br ?/>'
+        )
+        text_value_match: re.Match = subpattern.search(page_text)
+        if text_value_match:
+            text_value_match_value: str = text_value_match.group(1)
+            text_value += text_value_match_value
+        return text_value
+
+    def extract_text_from_strong_element(self, strong_text) -> str:
+        vetting_status:str = ""
+        strong_element = self.page_body.xpath(
+            f'//strong[contains(text(), "{strong_text}")]'
+        )[0]
+        if strong_element.text:
+            vetting_status = strong_element.text.replace(
+                strong_text, ''
+            ).strip()
+        return vetting_status
+
+    @staticmethod
+    def modify_inline_greek_text(element_item: etree.Element) -> etree.Element:
+        # TODO: Fix the return value so it's not entities
+        greek_text = element_item.text
+        greek_text = convert_betacode_to_unicode(greek_text)
+        new_greek_text_element = etree.Element('em')
+        new_greek_text_element.text = greek_text
+        return new_greek_text_element
 
     @staticmethod
     def modify_sol_href(href_value: str) -> str:
@@ -148,32 +177,11 @@ class ExtractEntry(object):
             href_value = f"/credits/{adler_letter}/{adler_number}/"
         return href_value
 
-    def convert_suda_urls(self, fragment: etree.Element) -> etree.Element:
-        anchor_elements = fragment.xpath("//a")
-        for element_item in anchor_elements:
-            if element_item.tag == "a":
-                href_value = element_item.get("href")
-                href_value = self.modify_sol_href(href_value)
-                element_item.attrib["href"] = href_value
-        return fragment
-
-    def convert_inline_greek(self, fragment: etree.Element) -> etree.Element:
-        inline_greek_elements = fragment.xpath('//g')
-        for element_item in inline_greek_elements:
-            if element_item.tag == 'g':
-                greek_text = element_item.text
-                greek_text = convert_betacode_to_unicode(greek_text)
-                new_greek_text_element = etree.Element('em')
-                new_greek_text_element.text = greek_text
-                parent_element = element_item.getparent()
-                parent_element.replace(element_item, new_greek_text_element)
-        return fragment
-
     def get_adler_reference(self) -> str:
         """
         Returns the Adler reference in the form `'{letter}, {number}'`
         """
-        adler_fragment: etree.Element = self.extract_values_btw_strong_br(
+        adler_fragment: etree.Element = self.extract_elements_between_strong_and_linebreak(
             "Adler number: "
         )
         adler_number_parts: list = adler_fragment.findall('span')
@@ -197,7 +205,7 @@ class ExtractEntry(object):
         ```
         # TODO: Change format to `{ref_number}: '{url}'`
         """
-        associated_add: str = self.extract_from_strong_to_next_strong(
+        associated_add: str = self.extract_text_between_strong_elements(
             'Associated internet address: ',
             'Keywords: '
         )
@@ -230,7 +238,7 @@ class ExtractEntry(object):
         """
         Returns the headword in Greek as a Unicode UTF-8 string.
         """
-        headword_fragment: etree.Element = self.extract_values_btw_strong_br(
+        headword_fragment: etree.Element = self.extract_elements_between_strong_and_linebreak(
             "Headword:"
         )
         headword: str = headword_fragment.findtext('a')
@@ -244,7 +252,7 @@ class ExtractEntry(object):
         - {keyword_value.2}
         """
         keywords: list = []
-        keywords_raw: str = self.extract_from_strong_to_next_strong(
+        keywords_raw: str = self.extract_text_between_strong_elements(
             'Keywords: ',
             'Translated by'
         )
@@ -299,7 +307,7 @@ class ExtractEntry(object):
         Return the translator name with a link to the "credits" endpoint
         for the current lemma and the translation time and date as a string.
         """
-        translator: etree.Element = self.extract_values_btw_strong_br(
+        translator: etree.Element = self.extract_elements_between_strong_and_linebreak(
             'Translated by'
         )
         item: etree.Element
@@ -324,7 +332,7 @@ class ExtractEntry(object):
         - high
         If the vetting status isn't found, raises an exception.
         """
-        vetting_status: str = self.extract_strong_element_text(
+        vetting_status: str = self.extract_text_from_strong_element(
             'Vetting Status: '
         )
         if not vetting_status in ["draft", "low", "high"]:
