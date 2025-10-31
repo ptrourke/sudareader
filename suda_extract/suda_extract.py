@@ -411,7 +411,7 @@ class ExtractEntry(object):
             'greek_original': self.get_greek_original(),
             'translation': self.get_translation(),
             'notes': self.get_notes(),
-            'references':self.get_references(),
+            'references': self.get_references(),
             'keywords': self.get_keywords(),
             'translator': self.get_translator()
         }
