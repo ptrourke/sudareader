@@ -12,6 +12,12 @@ class TestExtractEntry(unittest.TestCase):
         super().__init__(*args, **kwargs)
         self.rho289 = ExtractEntry(f'{CODE_FILES}/suda_extract/test/test_files/rho289.html')
 
+    # def test_convert_suda_urls(self):
+    #     raise Exception('Not implemented!')
+    #
+    # def test_convert_inline_greek(self):
+    #     raise Exception('Not implemented!')
+
     def test_extract_element_by_div_class_name(self):
         test_vectors = [
             {
@@ -48,7 +54,6 @@ class TestExtractEntry(unittest.TestCase):
                 actual_result
             ).decode('utf-8').strip()
             self.assertEqual(expected_result, actual_result)
-
 
     def test_modify_sol_href(self):
         test_vectors = [
