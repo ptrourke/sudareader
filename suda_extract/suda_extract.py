@@ -271,7 +271,8 @@ class ExtractEntry(object):
         Returns the Greek original of the definition as a unicode UTF-8 string.
         """
         greek_original_text: str = ''
-        greek_original_element: etree.Element = self.extract_element_by_div_class_name('greek')
+        greek_original_element: etree.Element =\
+            self.extract_element_by_div_class_name('greek')
         if not greek_original_element.text:
             return greek_original_text
         greek_original_text = greek_original_element.text
@@ -282,7 +283,8 @@ class ExtractEntry(object):
         """
         Returns the headword in Greek as a Unicode UTF-8 string.
         """
-        headword_fragment: etree.Element = self.extract_elements_between_strong_and_linebreak(
+        headword_fragment: etree.Element =\
+            self.extract_elements_between_strong_and_linebreak(
             "Headword:"
         )
         headword: str = headword_fragment.findtext('a')
@@ -306,7 +308,11 @@ class ExtractEntry(object):
             keywords_raw,
             htmlparser
         )
-        keyword_list: etree.Element = keyword_elements.find('body').findall('a')
+        keyword_list: etree.Element = keyword_elements.find(
+            'body'
+        ).findall(
+            'a'
+        )
         if not keyword_list:
             return keywords
         for keyword in keyword_list:
@@ -323,7 +329,9 @@ class ExtractEntry(object):
 
     def get_references(self) -> str:
         # TODO: Split references, return as a list
-        references: etree.Element = self.extract_element_by_div_class_name('bibliography')
+        references: etree.Element = self.extract_element_by_div_class_name(
+            'bibliography'
+        )
         reference_text: str = etree.tostring(references).decode('utf-8')
         return str(reference_text)
 
@@ -332,8 +340,10 @@ class ExtractEntry(object):
         Return the English translation of the headword as
         a Unicode UTF-8 string.
         """
-        translated_headword: str = self.extract_text_between_strong_and_linebreak(
-            "Translated headword:"
+        translated_headword: str = (
+            self.extract_text_between_strong_and_linebreak(
+                "Translated headword:"
+            )
         )
         return translated_headword
 
@@ -342,7 +352,9 @@ class ExtractEntry(object):
         Get the English translation of the definition as
         a Unicode UTF-8 string.
         """
-        translation:etree.Element = self.extract_element_by_div_class_name('translation')
+        translation:etree.Element = self.extract_element_by_div_class_name(
+            'translation'
+        )
         translation_text: str = etree.tostring(translation).decode('utf-8')
         return str(translation_text)
 
@@ -351,8 +363,10 @@ class ExtractEntry(object):
         Return the translator name with a link to the "credits" endpoint
         for the current lemma and the translation time and date as a string.
         """
-        translator: etree.Element = self.extract_elements_between_strong_and_linebreak(
-            'Translated by'
+        translator: etree.Element = (
+            self.extract_elements_between_strong_and_linebreak(
+                'Translated by'
+            )
         )
         item: etree.Element
         translator_name: str = ''.join([etree.tostring(
@@ -362,7 +376,9 @@ class ExtractEntry(object):
 
     def get_vetting_history(self) -> str:
         # TODO: return as a list of vetting actions (no need for links).
-        vetting_history: etree.Element = self.extract_element_by_div_class_name('editor')
+        vetting_history: etree.Element = (
+            self.extract_element_by_div_class_name('editor')
+        )
         vetting_history_text: str = etree.tostring(
             vetting_history
         ).decode('utf-8')
@@ -385,7 +401,8 @@ class ExtractEntry(object):
 
     def get_lemma_attributes(self) -> dict:
         lemma = {
-            'associated_internet_addresses': self.get_associated_internet_addresses(),
+            'associated_internet_addresses':
+                self.get_associated_internet_addresses(),
             'adler_reference': self.get_adler_reference(),
             'headword': self.get_headword(),
             'translated_headword': self.get_translated_headword(),
