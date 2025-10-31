@@ -40,6 +40,18 @@ class TestExtractEntry(unittest.TestCase):
             actual_result = test_file.get_adler_reference()
             self.assertEqual(expected_result, actual_result)
 
+    def test_get_greek_original(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": '̔Ρυκάνα· τεκτονικον ἐργαλεῖον. και πέλεκυν, ῥυκάναν τ’ εὐαγέα, και περιαγες τρύπανον. θηλυκῶς ἡ ῥυκάνα.'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result = test_file.get_greek_original()
+            self.assertEqual(expected_result, actual_result)
 
     def test_get_translator(self):
         test_vectors = [

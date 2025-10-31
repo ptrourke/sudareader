@@ -165,6 +165,9 @@ class ExtractEntry(object):
         return fragment
 
     def get_adler_reference(self) -> str:
+        """
+        Get the Adler reference in the form `'{letter}, {number}'`
+        """
         adler_fragment: etree.Element = self.extract_values_btw_strong_br(
             "Adler number: "
         )
@@ -174,6 +177,18 @@ class ExtractEntry(object):
         adler_number: str = f'{adler_letter},{adler_item}'
         return adler_number
 
+    def get_greek_original(self) -> str:
+        """
+        Get the Greek original of the definition as a unicode UTF-8 string.
+        """
+        greek_original_text: str = ''
+        greek_original_element: etree.Element = self.extract_by_div_class_name('greek')
+        if not greek_original_element.text:
+            return greek_original_text
+        greek_original_text = greek_original_element.text
+        greek_original_text = convert_betacode_to_unicode(greek_original_text)
+        return greek_original_text
+
     def get_headword(self) -> str:
         headword_fragment: etree.Element = self.extract_values_btw_strong_br(
             "Headword:"
@@ -181,6 +196,18 @@ class ExtractEntry(object):
         headword: str = headword_fragment.findtext('a')
         headword = convert_betacode_to_unicode(headword)
         return headword
+
+    def get_notes(self):
+        # TODO: Split notes by note number
+        notes = self.extract_by_div_class_name('notes')
+        notes = etree.tostring(notes).decode('utf-8')
+        return str(notes)
+
+    def get_references(self) -> str:
+        # TODO: Split notes by note number
+        references: etree.Element = self.extract_by_div_class_name('bibliography')
+        reference_text: str = etree.tostring(references).decode('utf-8')
+        return str(reference_text)
 
     def get_translated_headword(self) -> str:
         translated_headword: str = self.extract_text_between_strong_and_linebreak(
@@ -203,31 +230,10 @@ class ExtractEntry(object):
         translation_text: str = etree.tostring(translation).decode('utf-8')
         return str(translation_text)
 
-    def get_notes(self):
-        # TODO: Split notes by note number
-        notes = self.extract_by_div_class_name('notes')
-        notes = etree.tostring(notes).decode('utf-8')
-        return str(notes)
-
-    def get_references(self) -> str:
-        # TODO: Split notes by note number
-        references: etree.Element = self.extract_by_div_class_name('bibliography')
-        reference_text: str = etree.tostring(references).decode('utf-8')
-        return str(reference_text)
-
     def get_vetting_history(self) -> str:
         vetting_history: etree.Element = self.extract_by_div_class_name('editor')
         vetting_history_text: str = etree.tostring(vetting_history).decode('utf-8')
         return str(vetting_history_text)
-
-    def get_greek_original(self) -> str:
-        greek_original_text: str = ''
-        greek_original_element: etree.Element = self.extract_by_div_class_name('greek')
-        if not greek_original_element.text:
-            return greek_original_text
-        greek_original_text = greek_original_element.text
-        greek_original_text = convert_betacode_to_unicode(greek_original_text)
-        return greek_original_text
 
     def get_vetting_status(self) -> str:
         vetting_status: str = self.extract_strong_element_text('Vetting Status: ')
