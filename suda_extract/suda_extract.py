@@ -18,7 +18,7 @@ class ExtractEntry(object):
             page_body = self.convert_suda_urls(page_body)
             self.page_body: etree.Element = page_body
 
-    def extract_by_div_class_name(
+    def extract_element_by_div_class_name(
             self,
             element_class_name: str
     ) -> etree.Element:
@@ -31,17 +31,6 @@ class ExtractEntry(object):
             f'//div[@class="{element_class_name}"]'
         )[0]
         return div_element
-
-    def extract_strong_element_text(self, strong_text) -> str:
-        vetting_status:str = ""
-        strong_element = self.page_body.xpath(
-            f'//strong[contains(text(), "{strong_text}")]'
-        )[0]
-        if strong_element.text:
-            vetting_status = strong_element.text.replace(
-                strong_text, ''
-            ).strip()
-        return vetting_status
 
     def extract_from_strong_to_next_strong(
             self,
@@ -58,6 +47,17 @@ class ExtractEntry(object):
             text_match_value: str = text_match.group(1)
             text_value += text_match_value
         return text_value
+
+    def extract_strong_element_text(self, strong_text) -> str:
+        vetting_status:str = ""
+        strong_element = self.page_body.xpath(
+            f'//strong[contains(text(), "{strong_text}")]'
+        )[0]
+        if strong_element.text:
+            vetting_status = strong_element.text.replace(
+                strong_text, ''
+            ).strip()
+        return vetting_status
 
     def extract_text_between_strong_and_linebreak(
             self,
@@ -219,7 +219,7 @@ class ExtractEntry(object):
         Returns the Greek original of the definition as a unicode UTF-8 string.
         """
         greek_original_text: str = ''
-        greek_original_element: etree.Element = self.extract_by_div_class_name('greek')
+        greek_original_element: etree.Element = self.extract_element_by_div_class_name('greek')
         if not greek_original_element.text:
             return greek_original_text
         greek_original_text = greek_original_element.text
@@ -265,13 +265,13 @@ class ExtractEntry(object):
 
     def get_notes(self):
         # TODO: Split notes by note number, return as a list
-        notes = self.extract_by_div_class_name('notes')
+        notes = self.extract_element_by_div_class_name('notes')
         notes = etree.tostring(notes).decode('utf-8')
         return str(notes)
 
     def get_references(self) -> str:
         # TODO: Split references, return as a list
-        references: etree.Element = self.extract_by_div_class_name('bibliography')
+        references: etree.Element = self.extract_element_by_div_class_name('bibliography')
         reference_text: str = etree.tostring(references).decode('utf-8')
         return str(reference_text)
 
@@ -290,7 +290,7 @@ class ExtractEntry(object):
         Get the English translation of the definition as
         a Unicode UTF-8 string.
         """
-        translation:etree.Element = self.extract_by_div_class_name('translation')
+        translation:etree.Element = self.extract_element_by_div_class_name('translation')
         translation_text: str = etree.tostring(translation).decode('utf-8')
         return str(translation_text)
 
@@ -310,7 +310,7 @@ class ExtractEntry(object):
 
     def get_vetting_history(self) -> str:
         # TODO: return as a list of vetting actions (no need for links).
-        vetting_history: etree.Element = self.extract_by_div_class_name('editor')
+        vetting_history: etree.Element = self.extract_element_by_div_class_name('editor')
         vetting_history_text: str = etree.tostring(
             vetting_history
         ).decode('utf-8')

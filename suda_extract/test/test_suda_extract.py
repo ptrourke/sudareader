@@ -12,7 +12,7 @@ class TestExtractEntry(unittest.TestCase):
         super().__init__(*args, **kwargs)
         self.rho289 = ExtractEntry(f'{CODE_FILES}/suda_extract/test/test_files/rho289.html')
 
-    def test_extract_by_div_class_name(self):
+    def test_extract_element_by_div_class_name(self):
         test_vectors = [
             {
                 "test_file": self.rho289,
@@ -25,7 +25,7 @@ class TestExtractEntry(unittest.TestCase):
             test_file = test_vector["test_file"]
             test_value = test_vector["test_value"]
             expected_result = test_vector["expected_result"]
-            actual_result_raw = test_file.extract_by_div_class_name(test_value)
+            actual_result_raw = test_file.extract_element_by_div_class_name(test_value)
             actual_result = etree.tostring(
                 actual_result_raw
             ).decode('utf-8').strip()
