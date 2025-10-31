@@ -129,15 +129,21 @@ class ExtractEntry(object):
         return text_value
 
     def extract_text_from_strong_element(self, strong_text) -> str:
-        vetting_status:str = ""
+        """
+        Helper method that takes a string, searches the document for the first
+        `<strong>` element with text starting with that string, and returns
+        the remaining string content from that element as
+        a Unicode UTF-8 string.
+        """
+        strong_element_text:str = ""
         strong_element = self.page_body.xpath(
             f'//strong[contains(text(), "{strong_text}")]'
         )[0]
         if strong_element.text:
-            vetting_status = strong_element.text.replace(
+            strong_element_text = strong_element.text.replace(
                 strong_text, ''
             ).strip()
-        return vetting_status
+        return strong_element_text
 
     @staticmethod
     def modify_inline_greek_text(element_item: etree.Element) -> etree.Element:
@@ -368,7 +374,7 @@ class ExtractEntry(object):
         If the vetting status isn't found, raises an exception.
         """
         vetting_status: str = self.extract_text_from_strong_element(
-            'Vetting Status: '
+            "Vetting Status: "
         )
         if not vetting_status in ["draft", "low", "high"]:
             raise Exception('Unable to extract vetting_status')
