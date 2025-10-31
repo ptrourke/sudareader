@@ -7,8 +7,6 @@ from suda_extract.suda_extract import ExtractEntry
 htmlparser = etree.HTMLParser(encoding="utf-8")
 
 
-
-
 class TestExtractEntry(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -51,6 +49,19 @@ class TestExtractEntry(unittest.TestCase):
             test_file = test_vector["test_file"]
             expected_result = test_vector["expected_result"]
             actual_result = test_file.get_greek_original()
+            self.assertEqual(expected_result, actual_result)
+
+    def test_get_headword(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": '̔Ρυκάνα'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result = test_file.get_headword()
             self.assertEqual(expected_result, actual_result)
 
     def test_get_translator(self):
