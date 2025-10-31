@@ -184,7 +184,9 @@ class ExtractEntry(object):
                     return href_value
                 href_value = f"/search/{field_name}/{search_string}"
                 return href_value
-            if href_value.startswith("/~raphael/sol/finder/showlinks.cgi?kws="):
+            if href_value.startswith(
+                    "/~raphael/sol/finder/showlinks.cgi?kws="
+            ):
                 full_text_search = href_value.replace(
                     "/~raphael/sol/finder/showlinks.cgi?kws=",
                     ""
@@ -222,7 +224,8 @@ class ExtractEntry(object):
         """
         Returns the Adler reference in the form `'{letter}, {number}'`
         """
-        adler_fragment: etree.Element = self.extract_elements_between_strong_and_linebreak(
+        adler_fragment: etree.Element =\
+            self.extract_elements_between_strong_and_linebreak(
             "Adler number: "
         )
         adler_number_parts: list = adler_fragment.findall('span')
