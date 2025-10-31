@@ -58,6 +58,24 @@ class TestExtractEntry(unittest.TestCase):
             ).decode('utf-8').strip()
             self.assertEqual(expected_result, actual_result)
 
+    def test_extract_text_between_strong_elements(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "test_values": ["Keywords: ", "Translated by"],
+                "expected_result":
+                    '<a href="/search/keyword/daily+life">daily life</a>; <a href="/search/keyword/definition">definition</a>; <a href="/search/keyword/dialects,+grammar,+and+etymology">dialects, grammar, and etymology</a>; <a href="/search/keyword/poetry">poetry</a>; <a href="/search/keyword/religion">religion</a>; <a href="/search/keyword/science+and+technology">science and technology</a>; <a href="/search/keyword/trade+and+manufacture">trade and manufacture</a><br />'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            test_values = test_vector["test_values"]
+            expected_result = test_vector["expected_result"]
+            actual_result = test_file.extract_text_between_strong_elements(
+                test_values[0], test_values[1]
+            )
+            self.assertEqual(expected_result, actual_result)
+
     def test_modify_inline_greek_text(self):
         test_vectors = [
             {

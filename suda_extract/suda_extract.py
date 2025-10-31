@@ -88,6 +88,13 @@ class ExtractEntry(object):
             strong_text: str,
             next_strong_text: str
     ) -> str:
+        """
+        Helper method that takes two strings, searches the document for the
+        first `<strong>` element with text starting with that string, then
+        returns the substring of the document from that element to the next
+        `<strong>` element with text starting with the second string
+        as a UTF-8 string.
+        """
         text_value: str = ''
         page_text: str = str(etree.tostring(self.page_body))
         subpattern = re.compile(
