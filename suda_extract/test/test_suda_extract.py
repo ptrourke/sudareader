@@ -39,6 +39,25 @@ class TestExtractEntry(unittest.TestCase):
             ).decode('utf-8').strip()
             self.assertEqual(expected_result, actual_result)
 
+    def test_extract_elements_between_strong_and_linebreak(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "test_value": "Adler number: ",
+                "expected_result":
+                    '<AdlerNumber><span class="target">rho</span>,<span class="target">289</span>\n</AdlerNumber>'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            test_value = test_vector["test_value"]
+            expected_result = test_vector["expected_result"]
+            actual_result_raw = test_file.extract_elements_between_strong_and_linebreak(test_value)
+            actual_result = etree.tostring(
+                actual_result_raw
+            ).decode('utf-8').strip()
+            self.assertEqual(expected_result, actual_result)
+
     def test_modify_inline_greek_text(self):
         test_vectors = [
             {
