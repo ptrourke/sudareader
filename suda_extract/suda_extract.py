@@ -259,7 +259,7 @@ class ExtractEntry(object):
         return keywords
 
     def get_notes(self):
-        # TODO: Split notes by note number
+        # TODO: Split notes by note number, return as a list
         notes = self.extract_by_div_class_name('notes')
         notes = etree.tostring(notes).decode('utf-8')
         return str(notes)

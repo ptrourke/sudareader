@@ -58,7 +58,6 @@ class TestExtractEntry(unittest.TestCase):
             actual_result = test_file.get_associated_internet_addresses()
             self.assertEqual(expected_result, actual_result)
 
-
     def test_get_greek_original(self):
         test_vectors = [
             {
@@ -104,6 +103,21 @@ class TestExtractEntry(unittest.TestCase):
             test_file = test_vector["test_file"]
             expected_result = test_vector["expected_result"]
             actual_result = test_file.get_keywords()
+            self.assertEqual(expected_result, actual_result)
+
+    def test_get_notes(self):
+        self.maxDiff = None
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result":
+                    '<div class="notes">[1] <span class="title">Greek Anthology</span> 6.204.3-4 (<a href="/search/Leonidas/">Leonidas</a> of <a href="https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0006:id=Tarentum">Tarentum</a>), a carpenter retiring from his trade dedicates tools to Athena; cf. Gow and Page (vol. I, 109), (vol. II, 316), and other extracts from this epigram at <a href="/lemma/delta/108/">delta 108</a> and <a href="/lemma/pi/2298/">pi 2298</a>. Gow and Page find (ibid.) the rendering of <em>&#949;&#8016;&#945;&#947;&#941;&#945;</em><i>bright</i>, <i>clear</i>, <i>conspicuous</i>; cf. LSJ s.v. (web address 1)) into English as <i>bright</i> (cf. Paton (404-405)) to be "plainly unsuitable". Although it is quite plausible that the sharpened blade of a wood plane would indeed be shiny and bright on its cutting edge, Gow and Page endorse (ibid.) such emendations as <em>&#949;&#8016;&#940;&#954;&#949;&#945;</em><em>&#949;&#8016;&#942;&#954;&#949;&#945;</em><i>sharp-edged</i>), <em>&#949;&#8016;&#960;&#945;&#947;&#941;&#945;</em><i>well-constructed</i>), and <em>&#949;&#8016;&#945;&#967;&#941;&#945;</em><i>well-sounding</i>).</div>\n'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result = test_file.get_notes()
             self.assertEqual(expected_result, actual_result)
 
     def test_get_translator(self):
