@@ -10,7 +10,7 @@ class TestExtractEntry(unittest.TestCase):
     def test_modify_sol_href(self):
         test_vectors = [
             {
-                "test_value": "/~raphael/sol/sol-cgi-bin/search.cgi?db=REAL&field=adlerhw_gr&searchstr=alpha,1002",
+                "test_value": "/~raphael/sol/sol-cgi-bin/search.cgi?db=REAL&field=adlerhw_gr&searchstr=alpha,1002",  # noqa E501
                 "expected_result": "/lemma/alpha/1002/"
             }
         ]
