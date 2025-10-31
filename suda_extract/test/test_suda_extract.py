@@ -175,3 +175,16 @@ class TestExtractEntry(unittest.TestCase):
             actual_result = test_file.get_translator()
             self.assertEqual(expected_result, actual_result)
 
+    def test_get_vetting_history(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": '<div class="editor"><a href="/credits/rho/289/">David Whitehead</a> (added note; modified keywords; cosmetics) on 13 November 2005@04:55:38.<br />\n<a href="/credits/rho/289/">David Whitehead</a> on 25 August 2011@05:44:52.<br />\n<a href="/credits/rho/289/">David Whitehead</a> (coding) on 25 May 2016@07:38:33.<br />\n<a href="/credits/rho/289/">Ronald Allen</a> (expanded n.1, added bibliography, added cross-references, added keyword) on 16 February 2021@18:28:34.<br />\n</div>'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result = test_file.get_vetting_history()
+            self.assertEqual(expected_result, actual_result)
+

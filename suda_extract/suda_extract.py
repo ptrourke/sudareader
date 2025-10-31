@@ -304,9 +304,12 @@ class ExtractEntry(object):
         return str(translator_name)
 
     def get_vetting_history(self) -> str:
+        # TODO: return as a list of vetting actions (no need for links).
         vetting_history: etree.Element = self.extract_by_div_class_name('editor')
-        vetting_history_text: str = etree.tostring(vetting_history).decode('utf-8')
-        return str(vetting_history_text)
+        vetting_history_text: str = etree.tostring(
+            vetting_history
+        ).decode('utf-8')
+        return str(vetting_history_text).strip()
 
     def get_vetting_status(self) -> str:
         vetting_status: str = self.extract_strong_element_text('Vetting Status: ')
