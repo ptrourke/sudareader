@@ -12,6 +12,25 @@ class TestExtractEntry(unittest.TestCase):
         super().__init__(*args, **kwargs)
         self.rho289 = ExtractEntry(f'{CODE_FILES}/suda_extract/test/test_files/rho289.html')
 
+    def test_extract_by_div_class_name(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "test_value": "bibliography",
+                "expected_result":
+                    '<div class="bibliography">A.S.F. Gow and D.L. Page, eds., <i>The Greek Anthology: Hellenistic Epigrams</i>, vol. I, (Cambridge, 1965)<br />\nA.S.F. Gow and D.L. Page, eds., <i>The Greek Anthology: Hellenistic Epigrams</i>, vol. II, (Cambridge, 1965)<br />\nW.R. Paton, ed. <i>The Greek Anthology: Books I-VI</i>, (Cambridge, MA, 1999)</div>'  # noqa E501
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            test_value = test_vector["test_value"]
+            expected_result = test_vector["expected_result"]
+            actual_result_raw = test_file.extract_by_div_class_name(test_value)
+            actual_result = etree.tostring(
+                actual_result_raw
+            ).decode('utf-8').strip()
+            self.assertEqual(expected_result, actual_result)
+
     def test_modify_sol_href(self):
         test_vectors = [
             {
