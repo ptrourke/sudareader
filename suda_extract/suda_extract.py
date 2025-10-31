@@ -12,7 +12,6 @@ htmlparser = etree.HTMLParser(encoding="utf-8")
 class ExtractEntry(object):
 
     def __init__(self, page_path: str) -> None:
-        page_path = f'{EXTRACT_SOURCE_FILES}/{page_path}'
         with open(page_path, 'r') as raw_page_handle:
             raw_page: str = raw_page_handle.read()
             root: etree.Element = etree.fromstring(raw_page, htmlparser)
@@ -184,8 +183,6 @@ class ExtractEntry(object):
 
     def get_notes(self):
         # TODO: Split notes by note number
-        # TODO: Process links to cross-references
-        # TODO: Processing links to Perseus
         notes = self.get_by_div_class_name('notes')
         notes = etree.tostring(notes).decode('utf-8')
         return str(notes)
@@ -286,7 +283,7 @@ class ExtractEntry(object):
         }
         return lemma
 
-lemma = ExtractEntry('rho/289')
+lemma = ExtractEntry(f'{EXTRACT_SOURCE_FILES}/rho/289')
 print(safe_dump(lemma.get_lemma_attributes(), allow_unicode=True))
 
 
