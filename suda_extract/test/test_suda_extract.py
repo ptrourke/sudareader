@@ -13,9 +13,11 @@ class TestExtractEntry(unittest.TestCase):
         self.rho289 = ExtractEntry(f'{CODE_FILES}/suda_extract/test/test_files/rho289.html')
 
     # def test_convert_suda_urls(self):
+    #     TODO: implement test for convert_suda_urls
     #     raise Exception('Not implemented!')
     #
     # def test_convert_inline_greek(self):
+    #     TODO: implement test for convert_inline_greek
     #     raise Exception('Not implemented!')
 
     def test_extract_element_by_div_class_name(self):
