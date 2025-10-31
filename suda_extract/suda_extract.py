@@ -19,6 +19,9 @@ class ExtractEntry(object):
             self.page_body: etree.Element = page_body
 
     def convert_suda_urls(self, fragment: etree.Element) -> etree.Element:
+        """
+        TODO: Write test and document
+        """
         anchor_elements = fragment.xpath("//a")
         for element_item in anchor_elements:
             if element_item.tag == "a":
@@ -28,6 +31,9 @@ class ExtractEntry(object):
         return fragment
 
     def convert_inline_greek(self, fragment: etree.Element) -> etree.Element:
+        """
+        TODO: Write test and document
+        """
         inline_greek_elements = fragment.xpath('//g')
         for element_item in inline_greek_elements:
             if element_item.tag == 'g':
@@ -56,6 +62,12 @@ class ExtractEntry(object):
         self,
         strong_text: str
     ) -> etree.Element:
+        """
+        Helper method that takes a string, searches the document for the first
+        `<strong>` element with text starting with that string, and returns
+        the XML content between from that element to the next `<br/>` element
+        as an etree Element.
+        """
         element_name: str = re.sub(r'[^A-Za-z ]', '', strong_text)
         element_name = element_name.title()
         element_name = element_name.replace(' ', '')
@@ -79,7 +91,8 @@ class ExtractEntry(object):
         text_value: str = ''
         page_text: str = str(etree.tostring(self.page_body))
         subpattern = re.compile(
-            f'<strong>{strong_text}[^<]*</strong>(.*?)<strong>{next_strong_text}'
+            f'<strong>{strong_text}[^<]*</strong>(.*?)'
+            f'<strong>{next_strong_text}'
         )
         text_match: re.Match = subpattern.search(page_text)
         if text_match:
@@ -153,16 +166,25 @@ class ExtractEntry(object):
                 href_value = f"/search/{field_name}/{search_string}"
                 return href_value
             if href_value.startswith("/~raphael/sol/finder/showlinks.cgi?kws="):
-                full_text_search = href_value.replace("/~raphael/sol/finder/showlinks.cgi?kws=", "")
+                full_text_search = href_value.replace(
+                    "/~raphael/sol/finder/showlinks.cgi?kws=",
+                    ""
+                )
                 href_value = f"/search/{full_text_search}/"
                 return href_value
             if href_value.startswith("/~raphael/sol/sol-html/icons/"):
-                href_value = href_value.replace("/~raphael/sol/sol-html/icons/", "/images/")
+                href_value = href_value.replace(
+                    "/~raphael/sol/sol-html/icons/",
+                    "/images/"
+                )
                 return href_value
             if href_value == "/~raphael/sol/sol-html/search.css":
                 return "/style/search.css"
             if href_value.startswith("/~raphael/sol/sol-html"):
-                href_value = href_value.replace("/~raphael/sol/sol-html", "/")
+                href_value = href_value.replace(
+                    "/~raphael/sol/sol-html",
+                    "/"
+                )
             if href_value.endswith("index.html"):
                 href_value = href_value.replace("index.html", "")
         if href_value.startswith("http://"):
