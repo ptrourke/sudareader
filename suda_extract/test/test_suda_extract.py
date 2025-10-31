@@ -85,6 +85,27 @@ class TestExtractEntry(unittest.TestCase):
             actual_result = test_file.get_headword()
             self.assertEqual(expected_result, actual_result)
 
+    def test_get_keywords(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": [
+                    'daily life',
+                    'definition',
+                    'dialects, grammar, and etymology',
+                    'poetry',
+                    'religion',
+                    'science and technology',
+                    'trade and manufacture'
+                ]
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result = test_file.get_keywords()
+            self.assertEqual(expected_result, actual_result)
+
     def test_get_translator(self):
         test_vectors = [
             {

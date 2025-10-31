@@ -179,7 +179,7 @@ class ExtractEntry(object):
 
     def get_associated_internet_addresses(self) -> list:
         """
-        Get associated internet addresseses as a list of dictionary items,
+        Returns associated internet addresseses as a list of dictionary items,
         one per address, with the attributes `href` and `text`, in the form:
         ```
             [
@@ -232,6 +232,32 @@ class ExtractEntry(object):
         headword = convert_betacode_to_unicode(headword)
         return headword
 
+    def get_keywords(self) -> list:
+        """
+        Returns a list of keywords in the form
+        - {keyword_value.1}
+        - {keyword_value.2}
+        """
+        keywords: list = []
+        keywords_raw: str = self.extract_from_strong_to_next_strong(
+            'Keywords: ',
+            'Translated by'
+        )
+        if not keywords_raw:
+            return keywords
+        keyword_elements: etree.Element = etree.fromstring(
+            keywords_raw,
+            htmlparser
+        )
+        keyword_list: etree.Element = keyword_elements.find('body').findall('a')
+        if not keyword_list:
+            return keywords
+        for keyword in keyword_list:
+            if keyword.text:
+                text: str = keyword.text
+                keywords.append(text)
+        return keywords
+
     def get_notes(self):
         # TODO: Split notes by note number
         notes = self.extract_by_div_class_name('notes')
@@ -273,27 +299,6 @@ class ExtractEntry(object):
     def get_vetting_status(self) -> str:
         vetting_status: str = self.extract_strong_element_text('Vetting Status: ')
         return vetting_status
-
-    def get_keywords(self) -> list:
-        keywords: list = []
-        keywords_raw: str = self.extract_from_strong_to_next_strong(
-            'Keywords: ',
-            'Translated by'
-        )
-        if not keywords_raw:
-            return keywords
-        keyword_elements: etree.Element = etree.fromstring(
-            keywords_raw,
-            htmlparser
-        )
-        keyword_list: etree.Element = keyword_elements.find('body').findall('a')
-        if not keyword_list:
-            return keywords
-        for keyword in keyword_list:
-            if keyword.text:
-                text: str = keyword.text
-                keywords.append(text)
-        return keywords
 
     def get_lemma_attributes(self) -> dict:
         lemma = {
