@@ -5,7 +5,7 @@ from yaml import safe_load
 from yaml import safe_dump
 from betacode_converter.betacode_converter import convert_betacode_to_unicode
 
-htmlparser = etree.HTMLParser()
+htmlparser = etree.HTMLParser(encoding="utf-8")
 
 
 class ExtractEntry(object):
@@ -13,10 +13,12 @@ class ExtractEntry(object):
     def __init__(self, page_path: str) -> None:
         page_path = f'/home/ptrourke/workspace/github.com/ptrourke/sudareader/sol-entries/{page_path}'
         with open(page_path, 'r') as raw_page_handle:
-            raw_page = raw_page_handle.read()
-            root = etree.fromstring(raw_page, htmlparser)
-            page_body = root.find('body')
-            self.page_body = page_body
+            raw_page: str = raw_page_handle.read()
+            root: etree.Element = etree.fromstring(raw_page, htmlparser)
+            page_body: etree.Element = root.find('body')
+            page_body = self.convert_inline_greek(page_body)
+            page_body = self.convert_suda_urls(page_body)
+            self.page_body: etree.Element = page_body
 
     def get_by_div_class_name(self, element_class_name: str) -> etree.Element:
         div_element = self.page_body.xpath(
@@ -64,14 +66,80 @@ class ExtractEntry(object):
             new_fragment.append(next_element)
         return new_fragment
 
+    def convert_suda_urls(self, fragment: etree.Element) -> etree.Element:
+        anchor_elements = fragment.xpath("//a")
+        for element_item in anchor_elements:
+            if element_item.tag == "a":
+                href_value = element_item.get("href")
+                href_value = self.modify_sol_href(href_value)
+                element_item.attrib["href"] = href_value
+        return fragment
+
+    @staticmethod
+    def modify_sol_href(href_value: str) -> str:
+        if "~raphael" in href_value:
+            href_value = href_value.replace("&amp;", "&")
+            href_value = href_value.replace("%20", "+")
+            href_value = href_value.replace("enlogin=guest&", "")
+            href_value = href_value.replace("login=guest&", "")
+            href_value = href_value.replace("db=REAL&", "")
+
+            if href_value.startswith("/~raphael/sol/sol-cgi-bin/search.cgi?"):
+                field_name_pattern = re.compile("field=([^&]+)")
+                search_string_pattern = re.compile("searchstr=(.+)")
+                field_name_match = field_name_pattern.search(href_value)
+                search_string_match = search_string_pattern.search(href_value)
+                if search_string_match:
+                    search_string = search_string_match.group(1)
+                else:
+                    return "/search/"
+                if field_name_match:
+                    field_name = field_name_match.group(1)
+                else:
+                    return f"/search/{search_string}"
+                if field_name == "adlerhw_gr":
+                    search_string_parts = search_string.strip().split(',')
+                    adler_letter = search_string_parts[0]
+                    adler_number = search_string_parts[1]
+                    href_value = f"/lemma/{adler_letter}/{adler_number}/"
+                    return href_value
+                href_value = f"/search/{field_name}/{search_string}"
+                return href_value
+            if href_value.startswith("/~raphael/sol/finder/showlinks.cgi?kws="):
+                full_text_search = href_value.replace("/~raphael/sol/finder/showlinks.cgi?kws=", "")
+                href_value = f"/search/{full_text_search}/"
+                return href_value
+            if href_value.startswith("/~raphael/sol/sol-html/icons/"):
+                href_value = href_value.replace("/~raphael/sol/sol-html/icons/", "/images/")
+                return href_value
+            if href_value == "/~raphael/sol/sol-html/search.css":
+                return "/style/search.css"
+            if href_value.startswith("/~raphael/sol/sol-html"):
+                href_value = href_value.replace("/~raphael/sol/sol-html", "/")
+            if href_value.endswith("index.html"):
+                href_value = href_value.replace("index.html", "")
+        if href_value.startswith("http://"):
+            href_value = href_value[7:]
+            href_value = f"https://{href_value}"
+        if href_value.startswith("mailto:suda@lsv.uky.edu"):
+            href_value = href_value.replace("%20", "")
+            subject_matter = href_value.split("?Subject")[-1]
+            reference = subject_matter.split(",", 0)[-1]
+            reference = reference.split(":")[-1]
+            adler_letter, adler_number = reference.split(",")
+            href_value = f"/credits/{adler_letter}/{adler_number}/"
+        return href_value
+
     def convert_inline_greek(self, fragment: etree.Element) -> etree.Element:
-        for child in fragment:
-            if child.tag == 'g':
-                greek_text = child.text
+        inline_greek_elements = fragment.xpath('//g')
+        for element_item in inline_greek_elements:
+            if element_item.tag == 'g':
+                greek_text = element_item.text
                 greek_text = convert_betacode_to_unicode(greek_text)
                 new_greek_text_element = etree.Element('em')
                 new_greek_text_element.text = greek_text
-                fragment.replace(child, new_greek_text_element)
+                parent_element = element_item.getparent()
+                parent_element.replace(element_item, new_greek_text_element)
         return fragment
 
     def get_adler_number(self) -> str:
@@ -110,7 +178,6 @@ class ExtractEntry(object):
 
     def get_translation(self) -> str:
         translation:etree.Element = self.get_by_div_class_name('translation')
-        translation = self.convert_inline_greek(translation)
         translation_text: str = etree.tostring(translation).decode('utf-8')
         return str(translation_text)
 
@@ -119,7 +186,6 @@ class ExtractEntry(object):
         # TODO: Process links to cross-references
         # TODO: Processing links to Perseus
         notes = self.get_by_div_class_name('notes')
-        notes = self.convert_inline_greek(notes)
         notes = etree.tostring(notes).decode('utf-8')
         return str(notes)
 
@@ -128,7 +194,6 @@ class ExtractEntry(object):
         # TODO: Process links to cross-references
         # TODO: Processing links to Perseus
         references: etree.Element = self.get_by_div_class_name('bibliography')
-        references = self.convert_inline_greek(references)
         reference_text: str = etree.tostring(references).decode('utf-8')
         return str(reference_text)
 
@@ -173,7 +238,8 @@ class ExtractEntry(object):
         )
         assoc_add_text: etree.Element = etree.fromstring(
             associated_add,
-            htmlparser
+            htmlparser,
+
         )
         add_elem_list: etree.Element = assoc_add_text.find('body').findall('a')
         associated_addresses: list = []
