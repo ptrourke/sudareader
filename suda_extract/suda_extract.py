@@ -1,3 +1,4 @@
+import datetime
 from lxml import etree
 import re
 from yaml import safe_dump
@@ -374,15 +375,41 @@ class ExtractEntry(object):
         ).decode('utf-8') for item in list(translator)])
         return str(translator_name)
 
-    def get_vetting_history(self) -> str:
+    def get_vetting_history(self) -> list:
         # TODO: return as a list of vetting actions (no need for links).
-        vetting_history: etree.Element = (
+        vetting_history = []
+        vetting_history_raw: etree.Element = (
             self.extract_element_by_div_class_name('editor')
         )
         vetting_history_text: str = etree.tostring(
-            vetting_history
-        ).decode('utf-8')
-        return str(vetting_history_text).strip()
+            vetting_history_raw
+        ).decode('utf-8').strip()
+        if vetting_history_text.endswith('</div>'):
+            vetting_history_text = vetting_history_text[:-6]
+        if vetting_history_text.startswith('<div class="editor">'):
+            vetting_history_text = vetting_history_text[20:]
+        vetting_history_list: list = vetting_history_text.splitlines()
+        for vetting_history_item in vetting_history_list:
+            vetting_history_item = vetting_history_item.strip()
+            if not vetting_history_item:
+                continue
+            vhitem_pattern = re.compile(r'<a href="[^"]+">(?P<changed_by>[^<]+)</a> (?P<change>\([^)]+\))? ?on (?P<change_date>[0-9A-Za-z ]+@[0-9:]+)')
+            vhitem_match = vhitem_pattern.search(vetting_history_item)
+            if vhitem_match:
+                changed_by = vhitem_match.group("changed_by")
+                change = vhitem_match.group("change") or ""
+                if change:
+                    change = change[1:-1]
+                change_date = vhitem_match.group("change_date")
+                change_date = datetime.datetime.strptime(change_date, '%d %B %Y@%H:%M:%S')
+                change_date = change_date.strftime('%Y-%m-%dT%H:%M:%SZ')
+            vetting_history_item = {
+                'changed_by': changed_by,
+                'change': change,
+                'change_date': change_date
+            }
+            vetting_history.append(vetting_history_item)
+        return vetting_history
 
     def get_vetting_status(self) -> str:
         """

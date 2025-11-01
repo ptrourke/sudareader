@@ -297,7 +297,13 @@ class TestExtractEntry(unittest.TestCase):
         test_vectors = [
             {
                 "test_file": self.rho289,
-                "expected_result": '<div class="editor"><a href="/credits/rho/289/">David Whitehead</a> (added note; modified keywords; cosmetics) on 13 November 2005@04:55:38.<br />\n<a href="/credits/rho/289/">David Whitehead</a> on 25 August 2011@05:44:52.<br />\n<a href="/credits/rho/289/">David Whitehead</a> (coding) on 25 May 2016@07:38:33.<br />\n<a href="/credits/rho/289/">Ronald Allen</a> (expanded n.1, added bibliography, added cross-references, added keyword) on 16 February 2021@18:28:34.<br />\n</div>'  # noqa E501
+                "expected_result": [
+                    {"changed_by": "David Whitehead", "change": "added note; modified keywords; cosmetics", "change_date": "2005-11-13T04:55:38Z"},
+                    {"changed_by": "David Whitehead", "change": "", "change_date": "2011-08-25T05:44:52Z"},
+                    {"changed_by": "David Whitehead", "change": "coding", "change_date": "2016-05-25T07:38:33Z"},
+                    {"changed_by": "Ronald Allen", "change": "expanded n.1, added bibliography, added cross-references, added keyword", "change_date":  "2021-02-16T18:28:34Z"},
+                ],
+                "current_result": '<div class="editor"><a href="/credits/rho/289/">David Whitehead</a> (added note; modified keywords; cosmetics) on 13 November 2005@04:55:38.<br />\n<a href="/credits/rho/289/">David Whitehead</a> on 25 August 2011@05:44:52.<br />\n<a href="/credits/rho/289/">David Whitehead</a> (coding) on 25 May 2016@07:38:33.<br />\n<a href="/credits/rho/289/">Ronald Allen</a> (expanded n.1, added bibliography, added cross-references, added keyword) on 16 February 2021@18:28:34.<br />\n</div>'  # noqa E501
             }
         ]
         for test_vector in test_vectors:
