@@ -5,6 +5,7 @@ from yaml import safe_dump
 from betacode_converter.betacode_converter import convert_betacode_to_unicode
 
 from settings import EXTRACT_SOURCE_FILES
+from settings import HOST_ROOT_DIRECTORY
 
 htmlparser = etree.HTMLParser(encoding="utf-8")
 
@@ -157,7 +158,7 @@ class ExtractEntry(object):
 
     @staticmethod
     def modify_sol_href(href_value: str) -> str:
-        if "~raphael" in href_value:
+        if f"{HOST_ROOT_DIRECTORY}" in href_value:
             # TODO: Make the hostname string configurable in settings #13
             href_value = href_value.replace("&amp;", "&")
             href_value = href_value.replace("%20", "+")
@@ -165,7 +166,7 @@ class ExtractEntry(object):
             href_value = href_value.replace("login=guest&", "")
             href_value = href_value.replace("db=REAL&", "")
 
-            if href_value.startswith("/~raphael/sol/sol-cgi-bin/search.cgi?"):
+            if href_value.startswith(f"{HOST_ROOT_DIRECTORY}/sol/sol-cgi-bin/search.cgi?"):
                 field_name_pattern = re.compile("field=([^&]+)")
                 search_string_pattern = re.compile("searchstr=(.+)")
                 field_name_match = field_name_pattern.search(href_value)
@@ -187,25 +188,25 @@ class ExtractEntry(object):
                 href_value = f"/search/{field_name}/{search_string}"
                 return href_value
             if href_value.startswith(
-                    "/~raphael/sol/finder/showlinks.cgi?kws="
+                    f"{HOST_ROOT_DIRECTORY}/sol/finder/showlinks.cgi?kws="
             ):
                 full_text_search = href_value.replace(
-                    "/~raphael/sol/finder/showlinks.cgi?kws=",
+                    f"{HOST_ROOT_DIRECTORY}/sol/finder/showlinks.cgi?kws=",
                     ""
                 )
                 href_value = f"/search/{full_text_search}/"
                 return href_value
-            if href_value.startswith("/~raphael/sol/sol-html/icons/"):
+            if href_value.startswith(f"{HOST_ROOT_DIRECTORY}/sol/sol-html/icons/"):
                 href_value = href_value.replace(
-                    "/~raphael/sol/sol-html/icons/",
+                    f"{HOST_ROOT_DIRECTORY}/sol/sol-html/icons/",
                     "/images/"
                 )
                 return href_value
-            if href_value == "/~raphael/sol/sol-html/search.css":
+            if href_value == f"{HOST_ROOT_DIRECTORY}/sol/sol-html/search.css":
                 return "/style/search.css"
-            if href_value.startswith("/~raphael/sol/sol-html"):
+            if href_value.startswith(f"{HOST_ROOT_DIRECTORY}/sol/sol-html"):
                 href_value = href_value.replace(
-                    "/~raphael/sol/sol-html",
+                    f"{HOST_ROOT_DIRECTORY}/sol/sol-html",
                     "/"
                 )
             if href_value.endswith("index.html"):

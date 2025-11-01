@@ -4,6 +4,7 @@ from pathlib import Path
 VAULT = None
 
 # Directory where the sol-entries files are kept to be extracted.
+HOST_ROOT_DIRECTORY = VAULT
 EXTRACT_SOURCE_FILES = VAULT
 CODE_FILES = Path.cwd()
 
