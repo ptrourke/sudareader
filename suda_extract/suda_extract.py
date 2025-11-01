@@ -331,13 +331,28 @@ class ExtractEntry(object):
         notes = etree.tostring(notes).decode('utf-8')
         return str(notes)
 
-    def get_references(self) -> str:
-        # TODO: Split references, return as a list  #17
-        references: etree.Element = self.extract_element_by_div_class_name(
+    def get_references(self) -> list:
+        """
+        Returns a list of references of the form
+        ```
+        [
+            "A.S.F. Gow and D.L. Page, eds., <i>The Greek Anthology: Hellenistic Epigrams</i>, vol. I, (Cambridge, 1965)",  # noqa E501
+            "A.S.F. Gow and D.L. Page, eds., <i>The Greek Anthology: Hellenistic Epigrams</i>, vol. II, (Cambridge, 1965)",  # noqa E501
+            "W.R. Paton, ed. <i>The Greek Anthology: Books I-VI</i>, (Cambridge, MA, 1999)"
+        ]
+        ```
+        """
+        references: list = []
+        references_raw: etree.Element = self.extract_element_by_div_class_name(
             'bibliography'
         )
-        reference_text: str = etree.tostring(references).decode('utf-8')
-        return str(reference_text)
+        references_raw_text = etree.tostring(references_raw).decode('utf-8')
+        references_text = references_raw_text.replace('<div class="bibliography">', '')[:-7]
+        reference_text_list: list = references_text.splitlines()
+        for reference_text_item in reference_text_list:
+            reference_text_item = reference_text_item.strip().replace("<br />", "").strip()
+            references.append(reference_text_item)
+        return references
 
     def get_translated_headword(self) -> str:
         """

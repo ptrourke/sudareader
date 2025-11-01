@@ -239,8 +239,11 @@ class TestExtractEntry(unittest.TestCase):
         test_vectors = [
             {
                 "test_file": self.rho289,
-                "expected_result":
-                    '<div class="bibliography">A.S.F. Gow and D.L. Page, eds., <i>The Greek Anthology: Hellenistic Epigrams</i>, vol. I, (Cambridge, 1965)<br />\nA.S.F. Gow and D.L. Page, eds., <i>The Greek Anthology: Hellenistic Epigrams</i>, vol. II, (Cambridge, 1965)<br />\nW.R. Paton, ed. <i>The Greek Anthology: Books I-VI</i>, (Cambridge, MA, 1999)</div>\n'  # noqa E501
+                "expected_result": [
+                    "A.S.F. Gow and D.L. Page, eds., <i>The Greek Anthology: Hellenistic Epigrams</i>, vol. I, (Cambridge, 1965)",
+                    "A.S.F. Gow and D.L. Page, eds., <i>The Greek Anthology: Hellenistic Epigrams</i>, vol. II, (Cambridge, 1965)",
+                    "W.R. Paton, ed. <i>The Greek Anthology: Books I-VI</i>, (Cambridge, MA, 1999)"
+                ],
             }
         ]
         for test_vector in test_vectors:
