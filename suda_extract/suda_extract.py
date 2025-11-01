@@ -508,18 +508,10 @@ class ExtractEntry(object):
 
     def to_yaml(self) -> str:
         lemma: dict = self.get_lemma_attributes()
-        lemma_yaml: str = yaml.safe_dump(lemma, default_flow_style=False)
+        lemma_yaml: str = yaml.safe_dump(lemma)
         return lemma_yaml
 
     def to_json(self) -> str:
         lemma: dict = self.get_lemma_attributes()
         lemma_json: str = json.dumps(lemma, indent=4)
         return lemma_json
-
-def test_entry():
-    lemma = ExtractEntry(f'{EXTRACT_SOURCE_FILES}/rho/289')
-    print(lemma.to_json())
-
-test_entry()
-
-

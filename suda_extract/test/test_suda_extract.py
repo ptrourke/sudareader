@@ -386,3 +386,17 @@ class TestExtractEntry(unittest.TestCase):
             actual_result_text = test_file.to_json()
             actual_result = len(actual_result_text)
             self.assertEqual(expected_result, actual_result)
+
+    def test_to_yaml(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": 2000
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result_text = test_file.to_yaml()
+            actual_result = len(actual_result_text)
+            self.assertEqual(expected_result, actual_result)
