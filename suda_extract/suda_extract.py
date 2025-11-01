@@ -1,10 +1,10 @@
 import datetime
 from lxml import etree
 import re
-from yaml import safe_dump
+# from yaml import safe_dump
 from betacode_converter.betacode_converter import convert_betacode_to_unicode
 
-from settings import EXTRACT_SOURCE_FILES
+# from settings import EXTRACT_SOURCE_FILES
 from settings import HOST_ROOT_DIRECTORY
 
 htmlparser = etree.HTMLParser(encoding="utf-8")
@@ -18,6 +18,7 @@ class ExtractEntry(object):
             page_body: etree.Element = root.find('body')
             page_body = self.convert_inline_greek(page_body)
             page_body = self.convert_suda_urls(page_body)
+            page_body = self.convert_title_span_elements(page_body)
             self.page_body: etree.Element = page_body
 
     def convert_suda_urls(self, fragment: etree.Element) -> etree.Element:
@@ -325,11 +326,43 @@ class ExtractEntry(object):
                 keywords.append(text)
         return keywords
 
-    def get_notes(self):
-        # TODO: Split notes by note number, return as a dict #16
-        notes = self.extract_element_by_div_class_name('notes')
-        notes = etree.tostring(notes).decode('utf-8')
-        return str(notes)
+    @staticmethod
+    def convert_title_span_elements(fragment: etree.Element) -> etree.Element:
+        title_elements = fragment.xpath('//span[contains(@class, "title")]')
+        for title_element in title_elements:
+            cite_element = etree.Element('cite')
+            title_text = title_element.text
+            title_tail = title_element.tail
+            cite_element.text = title_text
+            cite_element.tail = title_tail
+            parent_element = title_element.getparent()
+            parent_element.replace(title_element, cite_element)
+        return fragment
+
+    def get_notes(self) -> dict:
+        """
+        Returns a dictionary object of numbered notes, of the form:
+        ```
+        {
+            1: '<cite>Iliad</cite> 3.118ff',
+        }
+        ```
+        """
+        notes: dict = {}
+        notes_raw = self.extract_element_by_div_class_name('notes')
+        notes_raw_text: str = etree.tostring(notes_raw).decode('utf-8')
+        notes_raw_text = notes_raw_text.replace('<div class="notes">', '')[:-7]
+        notes_list: list = notes_raw_text.splitlines()
+        notes_pattern = re.compile(r'\[(\d+)\] (.+)<br />')
+        for notes_list_item in notes_list:
+            notes_match = notes_pattern.search(notes_list_item)
+            if not notes_match:
+                continue
+            note_number = int(notes_match.group(1))
+            note_text = notes_match.group(2)
+            note_value = {note_number: note_text}
+            notes.update(note_value)
+        return notes
 
     def get_references(self) -> list:
         """
