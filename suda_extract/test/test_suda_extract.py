@@ -3,7 +3,7 @@ import unittest
 from lxml import etree
 
 from settings import CODE_FILES
-from suda_extract.suda_extract import ExtractEntry
+from suda_extract.extract_entry import ExtractEntry
 htmlparser = etree.HTMLParser(encoding="utf-8")
 
 
@@ -371,4 +371,32 @@ class TestExtractEntry(unittest.TestCase):
             test_file = test_vector["test_file"]
             expected_result = test_vector["expected_result"]
             actual_result = test_file.get_vetting_status()
+            self.assertEqual(expected_result, actual_result)
+
+    def test_to_json(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": 2441
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result_text = test_file.to_json()
+            actual_result = len(actual_result_text)
+            self.assertEqual(expected_result, actual_result)
+
+    def test_to_yaml(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": 2000
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result_text = test_file.to_yaml()
+            actual_result = len(actual_result_text)
             self.assertEqual(expected_result, actual_result)

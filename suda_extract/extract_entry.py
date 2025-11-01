@@ -1,10 +1,11 @@
 import datetime
+import json
 from lxml import etree
 import re
-# from yaml import safe_dump
+import yaml
 from betacode_converter.betacode_converter import convert_betacode_to_unicode
 
-# from settings import EXTRACT_SOURCE_FILES
+from settings import EXTRACT_SOURCE_FILES
 from settings import HOST_ROOT_DIRECTORY
 
 htmlparser = etree.HTMLParser(encoding="utf-8")
@@ -505,9 +506,12 @@ class ExtractEntry(object):
         }
         return lemma
 
-# lemma = ExtractEntry(f'{EXTRACT_SOURCE_FILES}/rho/289')
-# print(safe_dump(lemma.get_lemma_attributes(), allow_unicode=True))
+    def to_yaml(self) -> str:
+        lemma: dict = self.get_lemma_attributes()
+        lemma_yaml: str = yaml.safe_dump(lemma)
+        return lemma_yaml
 
-
-
-
+    def to_json(self) -> str:
+        lemma: dict = self.get_lemma_attributes()
+        lemma_json: str = json.dumps(lemma, indent=4)
+        return lemma_json
