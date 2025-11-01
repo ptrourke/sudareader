@@ -238,18 +238,15 @@ class ExtractEntry(object):
 
     def get_associated_internet_addresses(self) -> dict:
         """
-        Returns associated internet addresseses as a list of dictionary items,
-        one per address, with the attributes `href` and `text`, in the form:
+        Returns associated internet addresseses as dictionary,
+        one key per address, with web address number as the key and the
+        href URL as the value `{{ref_number}: '{url}'}`:
         ```
-        [
-            {
-                'href':
-                    'https://{URL}',
-                    'text': 'Web address {ref number}'
-            }
-        ]
+        {
+            1: 'https://www.perseus.tufts.edu/hopper/text?'
+                'doc=Perseus:text:1999.04.0057:entry=eu)agh/s3',
+        }
         ```
-        # TODO: Change format to `{ref_number}: '{url}'`  #15
         """
         associated_add: str = self.extract_text_between_strong_elements(
             'Associated internet address: ',
