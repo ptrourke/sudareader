@@ -236,7 +236,7 @@ class ExtractEntry(object):
         adler_number: str = f'{adler_letter},{adler_item}'
         return adler_number
 
-    def get_associated_internet_addresses(self) -> list:
+    def get_associated_internet_addresses(self) -> dict:
         """
         Returns associated internet addresseses as a list of dictionary items,
         one per address, with the attributes `href` and `text`, in the form:
@@ -260,11 +260,16 @@ class ExtractEntry(object):
             htmlparser,
         )
         add_elem_list: etree.Element = assoc_add_text.find('body').findall('a')
-        associated_addresses: list = []
+        associated_addresses: dict = {}
         for add_elem in add_elem_list:
             href: str = add_elem.get('href')
             text: str = add_elem.text
-            associated_addresses.append({'href': href, 'text': text})
+            index_pattern = re.compile('Web address (\d+)')
+            index_match = index_pattern.search(text)
+            if not index_match:
+                continue
+            index_num: int = int(index_match.group(1))
+            associated_addresses.update({index_num: href})
         return associated_addresses
 
     def get_greek_original(self) -> str:
