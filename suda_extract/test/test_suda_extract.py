@@ -11,6 +11,7 @@ class TestExtractEntry(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.rho289 = ExtractEntry(f'{CODE_FILES}/suda_extract/test/test_files/rho289.html')
+        self.sigma988 = ExtractEntry(f'{CODE_FILES}/suda_extract/test/test_files/sigma988.html')
 
     # def test_convert_suda_urls(self):
     #     TODO: implement test for convert_suda_urls
@@ -19,6 +20,21 @@ class TestExtractEntry(unittest.TestCase):
     # def test_convert_inline_greek(self):
     #     TODO: implement test for convert_inline_greek
     #     raise Exception('Not implemented!')
+
+    def test_convert_title_span_elements(self):
+        test_vectors = [
+            {
+                'test_value': '<html><body><div class="notes">[1] <span class="title">Synagoge</span> sigma190, <a href="/search/Photius/">Photius</a> sigma490 Theodoridis (with copious references to similar entries elsewhere). The headword, a feminine noun, occurs first in <a href="/search/Homer/">Homer</a>; its nominative singular, here, might be quoted from <span class="title">Iliad</span> 15.410 (if it is not simply generic).<br/>\n[2] <span class="title">Greek Anthology</span> 6.103.1 (Philip of <a href="https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0006:id=Thessalonike">Thessalonike</a>), with the headword in the accusative singular. See further excerpts from this epigram--a retiring carpenter\'s dedication of his line, plumb bob, and other tools--at <a href="/lemma/alpha/3875/">alpha 3875</a>, <a href="/lemma/mu/1071/">mu 1071</a>, <a href="/lemma/pi/2298/">pi 2298</a>, <a href="/lemma/sigma/1761/">sigma 1761</a>, and <a href="/lemma/psi/12/">psi 12</a>; cf. Bl&#252;mner (234-235).</div></body></html>',  # noqa E501
+                'expected_result': '<html><body><div class="notes">[1] <cite>Synagoge</cite> sigma190, <a href="/search/Photius/">Photius</a> sigma490 Theodoridis (with copious references to similar entries elsewhere). The headword, a feminine noun, occurs first in <a href="/search/Homer/">Homer</a>; its nominative singular, here, might be quoted from <cite>Iliad</cite> 15.410 (if it is not simply generic).<br/>\n[2] <cite>Greek Anthology</cite> 6.103.1 (Philip of <a href="https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0006:id=Thessalonike">Thessalonike</a>), with the headword in the accusative singular. See further excerpts from this epigram--a retiring carpenter\'s dedication of his line, plumb bob, and other tools--at <a href="/lemma/alpha/3875/">alpha 3875</a>, <a href="/lemma/mu/1071/">mu 1071</a>, <a href="/lemma/pi/2298/">pi 2298</a>, <a href="/lemma/sigma/1761/">sigma 1761</a>, and <a href="/lemma/psi/12/">psi 12</a>; cf. Bl&#252;mner (234-235).</div></body></html>'  # noqa E501
+            },
+        ]
+        for test_vector in test_vectors:
+            test_value = test_vector["test_value"]
+            test_element = etree.fromstring(test_value, htmlparser)
+            expected_result = test_vector["expected_result"]
+            actual_element = ExtractEntry.convert_title_span_elements(test_element)
+            actual_result = etree.tostring(actual_element).decode('utf-8').strip()
+            self.assertEqual(expected_result, actual_result)
 
     def test_extract_element_by_div_class_name(self):
         test_vectors = [
@@ -222,11 +238,29 @@ class TestExtractEntry(unittest.TestCase):
     def test_get_notes(self):
         self.maxDiff = None
         test_vectors = [
+            # {
+            #     "test_file": self.rho289,
+            #     "expected_result":
+            #         '<div class="notes">[1] <span class="title">Greek Anthology</span> 6.204.3-4 (<a href="/search/Leonidas/">Leonidas</a> of <a href="https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0006:id=Tarentum">Tarentum</a>), a carpenter retiring from his trade dedicates tools to Athena; cf. Gow and Page (vol. I, 109), (vol. II, 316), and other extracts from this epigram at <a href="/lemma/delta/108/">delta 108</a> and <a href="/lemma/pi/2298/">pi 2298</a>. Gow and Page find (ibid.) the rendering of <em>&#949;&#8016;&#945;&#947;&#941;&#945;</em><i>bright</i>, <i>clear</i>, <i>conspicuous</i>; cf. LSJ s.v. (web address 1)) into English as <i>bright</i> (cf. Paton (404-405)) to be "plainly unsuitable". Although it is quite plausible that the sharpened blade of a wood plane would indeed be shiny and bright on its cutting edge, Gow and Page endorse (ibid.) such emendations as <em>&#949;&#8016;&#940;&#954;&#949;&#945;</em><em>&#949;&#8016;&#942;&#954;&#949;&#945;</em><i>sharp-edged</i>), <em>&#949;&#8016;&#960;&#945;&#947;&#941;&#945;</em><i>well-constructed</i>), and <em>&#949;&#8016;&#945;&#967;&#941;&#945;</em><i>well-sounding</i>).</div>\n'  # noqa E501
+            # },
             {
-                "test_file": self.rho289,
-                "expected_result":
-                    '<div class="notes">[1] <span class="title">Greek Anthology</span> 6.204.3-4 (<a href="/search/Leonidas/">Leonidas</a> of <a href="https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0006:id=Tarentum">Tarentum</a>), a carpenter retiring from his trade dedicates tools to Athena; cf. Gow and Page (vol. I, 109), (vol. II, 316), and other extracts from this epigram at <a href="/lemma/delta/108/">delta 108</a> and <a href="/lemma/pi/2298/">pi 2298</a>. Gow and Page find (ibid.) the rendering of <em>&#949;&#8016;&#945;&#947;&#941;&#945;</em><i>bright</i>, <i>clear</i>, <i>conspicuous</i>; cf. LSJ s.v. (web address 1)) into English as <i>bright</i> (cf. Paton (404-405)) to be "plainly unsuitable". Although it is quite plausible that the sharpened blade of a wood plane would indeed be shiny and bright on its cutting edge, Gow and Page endorse (ibid.) such emendations as <em>&#949;&#8016;&#940;&#954;&#949;&#945;</em><em>&#949;&#8016;&#942;&#954;&#949;&#945;</em><i>sharp-edged</i>), <em>&#949;&#8016;&#960;&#945;&#947;&#941;&#945;</em><i>well-constructed</i>), and <em>&#949;&#8016;&#945;&#967;&#941;&#945;</em><i>well-sounding</i>).</div>\n'  # noqa E501
-            }
+                "test_file": self.sigma988,
+                "expected_result": {
+                    1: '<cite>Synagoge</cite> sigma190, <a href="/search/Photius/">Photius</a> '
+                        'sigma490 Theodoridis (with copious references to similar entries '
+                        'elsewhere). The headword, a feminine noun, occurs first in <a '
+                        'href="/search/Homer/">Homer</a>; its nominative singular, here, might be '
+                        'quoted from <cite>Iliad</cite> 15.410 (if it is not simply generic).',
+                    2: '<cite>Greek Anthology</cite> 6.103.1 (Philip of <a '
+                        'href="https://www.perseus.tufts.edu/hopper/text?doc=Perseus:text:1999.04.0006:id=Thessalonike">Thessalonike</a>), '
+                        'with the headword in the accusative singular. See further excerpts from '
+                        "this epigram--a retiring carpenter's dedication of his line, plumb bob, "
+                        'and other tools--at <a href="/lemma/alpha/3875/">alpha 3875</a>, <a '
+                        'href="/lemma/mu/1071/">mu 1071</a>, <a href="/lemma/pi/2298/">pi '
+                        '2298</a>, <a href="/lemma/sigma/1761/">sigma 1761</a>, and <a '
+                        'href="/lemma/psi/12/">psi 12</a>; cf. Bl&#252;mner (234-235). '
+                }  # noqa E501
+            },
         ]
         for test_vector in test_vectors:
             test_file = test_vector["test_file"]
