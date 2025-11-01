@@ -3,7 +3,7 @@ import unittest
 from lxml import etree
 
 from settings import CODE_FILES
-from suda_extract.suda_extract import ExtractEntry
+from suda_extract.extract_entry import ExtractEntry
 htmlparser = etree.HTMLParser(encoding="utf-8")
 
 
