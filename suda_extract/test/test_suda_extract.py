@@ -160,14 +160,10 @@ class TestExtractEntry(unittest.TestCase):
         test_vectors = [
             {
                 "test_file": self.rho289,
-                "expected_result": [
-                    {
-                        'href':
-                            'https://www.perseus.tufts.edu/hopper/text?'
-                            'doc=Perseus:text:1999.04.0057:entry=eu)agh/s3',
-                        'text': 'Web address 1'
-                    }
-                ]  # noqa E501
+                "expected_result": {
+                    1: 'https://www.perseus.tufts.edu/hopper/text?'
+                        'doc=Perseus:text:1999.04.0057:entry=eu)agh/s3',
+                },
             }
         ]
         for test_vector in test_vectors:
