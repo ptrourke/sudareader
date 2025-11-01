@@ -372,3 +372,17 @@ class TestExtractEntry(unittest.TestCase):
             expected_result = test_vector["expected_result"]
             actual_result = test_file.get_vetting_status()
             self.assertEqual(expected_result, actual_result)
+
+    def test_to_json(self):
+        test_vectors = [
+            {
+                "test_file": self.rho289,
+                "expected_result": 2441
+            }
+        ]
+        for test_vector in test_vectors:
+            test_file = test_vector["test_file"]
+            expected_result = test_vector["expected_result"]
+            actual_result_text = test_file.to_json()
+            actual_result = len(actual_result_text)
+            self.assertEqual(expected_result, actual_result)
