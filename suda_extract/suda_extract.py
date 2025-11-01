@@ -376,7 +376,17 @@ class ExtractEntry(object):
         return str(translator_name)
 
     def get_vetting_history(self) -> list:
-        # TODO: return as a list of vetting actions (no need for links).
+        """
+        Return the list of vetting events with each vetting event representated as a dictionary
+        with the attributes `changed_by`, `change`, and `change_date` (a UTC date-time in ISO 8601 format):
+        [
+            {
+                "changed_by": "{chnaged_by}",
+                "change": "{change}",
+                "change_date": "2005-11-13T04:55:38Z"
+            },
+        ]
+        """
         vetting_history = []
         vetting_history_raw: etree.Element = (
             self.extract_element_by_div_class_name('editor')
