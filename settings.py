@@ -7,6 +7,7 @@ VAULT = None
 HOST_ROOT_DIRECTORY = VAULT
 EXTRACT_SOURCE_FILES = VAULT
 CODE_FILES = Path.cwd()
+INDEX_HOSTNAME = VAULT
 
 try:
     from local_settings import *

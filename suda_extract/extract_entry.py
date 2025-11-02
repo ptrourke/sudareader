@@ -5,7 +5,6 @@ import re
 import yaml
 from betacode_converter.betacode_converter import convert_betacode_to_unicode
 
-from settings import EXTRACT_SOURCE_FILES
 from settings import HOST_ROOT_DIRECTORY
 
 htmlparser = etree.HTMLParser(encoding="utf-8")
@@ -515,3 +514,15 @@ class ExtractEntry(object):
         lemma: dict = self.get_lemma_attributes()
         lemma_json: str = json.dumps(lemma, indent=4)
         return lemma_json
+
+    def save(self, target_index_hostname: str) -> bool:
+        """
+        Save to suda-index
+        """
+        raise NotImplementedError()
+
+    def export(self, export_path: str, format: str="yaml") -> bool:
+        """
+        Export file to file system
+        """
+        raise NotImplementedError()
