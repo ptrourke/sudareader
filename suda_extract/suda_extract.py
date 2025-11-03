@@ -3,7 +3,7 @@ import os
 
 from settings import EXTRACT_SOURCE_FILES
 from settings import INDEX_HOSTNAME
-from suda_extract.extract_entry import ExtractEntry
+from extract_entry import ExtractEntry
 
 
 def main(*args, **kwargs):
@@ -56,7 +56,6 @@ if __name__ == "__main__":
     argument_parser.add_argument(
         "--json-format",
         "-j",
-        type=bool,
         dest="json_file",
         help="Output as json.",
         action='store_true',
@@ -64,7 +63,6 @@ if __name__ == "__main__":
     argument_parser.add_argument(
         "--yaml-format",
         "-y",
-        type=bool,
         dest="yaml_file",
         help="Output as yaml.",
         action='store_true',
