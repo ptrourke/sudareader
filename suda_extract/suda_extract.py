@@ -4,9 +4,10 @@ import os
 from settings import EXTRACT_SOURCE_FILES
 from settings import INDEX_HOSTNAME
 from extract_entry import ExtractEntry
+from suda_extract.extract_entries import ExtractEntries
 
 
-def main(*args, **kwargs):
+def main(**kwargs):
     path: str = kwargs.get("path")
     file_name: str = kwargs.get("file")
     export_path: str = kwargs.get("export")
@@ -15,7 +16,6 @@ def main(*args, **kwargs):
     if file_name:
         file_path: str = os.path.join(path, file_name)
         extract_entry = ExtractEntry(file_path)
-        lemma: dict = extract_entry.get_lemma_attributes()
         lemma_string: str = ""
         if export_path:
             export_type = "yaml" if yaml_file else "json"
@@ -27,6 +27,7 @@ def main(*args, **kwargs):
                 lemma_string = extract_entry.to_json()
             print(lemma_string)
     else:
+        extract_entries = ExtractEntries(path)
         pass
 
 if __name__ == "__main__":
@@ -44,28 +45,28 @@ if __name__ == "__main__":
         "-f",
         type=str,
         dest="file",
-        help="File name (without path) 0f specific Suda On Line page file to extract.",
+        help="File name (without path) 0f specific Suda On Line page file to extract."
     )
     argument_parser.add_argument(
         "--export",
         "-e",
         type=str,
         dest="export",
-        help="Export file name and path.",
+        help="Export file name and path."
     )
     argument_parser.add_argument(
         "--json-format",
         "-j",
         dest="json_file",
         help="Output as json.",
-        action='store_true',
+        action='store_true'
     )
     argument_parser.add_argument(
         "--yaml-format",
         "-y",
         dest="yaml_file",
         help="Output as yaml.",
-        action='store_true',
+        action='store_true'
     )
     argument_parser.add_argument(
         "--save-to-index",

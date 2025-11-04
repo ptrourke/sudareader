@@ -261,9 +261,9 @@ class ExtractEntry(object):
         add_elem_list: etree.Element = assoc_add_text.find('body').findall('a')
         associated_addresses: dict = {}
         for add_elem in add_elem_list:
-            href: str = add_elem.get('href')
+            href: str = add_elem.get("href")
             text: str = add_elem.text
-            index_pattern = re.compile('Web address (\d+)')
+            index_pattern = re.compile(r"Web address (\d+)")
             index_match = index_pattern.search(text)
             if not index_match:
                 continue
